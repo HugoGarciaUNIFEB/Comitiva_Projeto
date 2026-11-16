@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="emptyCartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F9F6F0" />
+      <stop offset="100%" stop-color="#E5E2DC" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#emptyCartGrad)" />
+  <g transform="translate(45, 45)">
+    <!-- Panela / Marmita vazia estilizada -->
+    <ellipse cx="55" cy="85" rx="42" ry="12" fill="#E1BFB5" opacity="0.6" />
+    <path d="M20 50 C20 80 32 90 55 90 C78 90 90 80 90 50 Z" fill="#DCDAD4" stroke="#8D7168" stroke-width="3" />
+    <ellipse cx="55" cy="50" rx="35" ry="10" fill="#FCF9F3" stroke="#8D7168" stroke-width="3" />
+    <!-- Alça da panela -->
+    <path d="M12 50 L20 50 M90 50 L98 50" stroke="#8D7168" stroke-width="4" stroke-linecap="round" />
+    <!-- Colher de pau cruzada -->
+    <path d="M35 30 L75 70" stroke="#D9531E" stroke-width="4" stroke-linecap="round" />
+    <ellipse cx="78" cy="73" rx="7" ry="5" transform="rotate(45 78 73)" fill="#D9531E" />
+    <!-- Pequenas estrelas ou fumacinha suave -->
+    <path d="M48 20 C46 15 52 10 50 5" stroke="#F2A900" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7" />
+  </g>
+</svg>

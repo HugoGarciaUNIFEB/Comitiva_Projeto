@@ -1,0 +1,23 @@
+# dependências e build
+node_modules
+.next
+out
+
+# segredos
+.env
+.env.local
+.env*.local
+
+# banco local e uploads
+prisma/dev.db
+prisma/dev.db-journal
+public/uploads
+
+# ferramentas
+.vercel
+.agents
+*.log
+
+stitch_export/
+scripts/download_extra_assets.js
+scripts/fetch_stitch_assets.js

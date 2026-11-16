@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="emptyMapGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F9F6F0" />
+      <stop offset="100%" stop-color="#E5E2DC" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#emptyMapGrad)" />
+  <g transform="translate(60, 45)">
+    <!-- Pin de localização com coração ou casa -->
+    <path d="M40 10 C26 10 16 20 16 34 C16 52 40 85 40 85 C40 85 64 52 64 34 C64 20 54 10 40 10 Z" fill="#D9531E" />
+    <circle cx="40" cy="34" r="10" fill="#FFFFFF" />
+    <!-- Pequena casa dentro do pin -->
+    <path d="M35 37 L35 33 L40 29 L45 33 L45 37 Z" fill="#4A2E2B" />
+    <!-- Sombra no chão -->
+    <ellipse cx="40" cy="90" rx="16" ry="4" fill="#8D7168" opacity="0.3" />
+  </g>
+</svg>

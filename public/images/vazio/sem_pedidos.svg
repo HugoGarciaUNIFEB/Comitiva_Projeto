@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="emptyOrderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F9F6F0" />
+      <stop offset="100%" stop-color="#E5E2DC" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#emptyOrderGrad)" />
+  <g transform="translate(55, 45)">
+    <!-- Comanda / Ticket em papel rústico -->
+    <rect x="15" y="10" width="60" height="90" rx="6" fill="#FFFFFF" stroke="#8D7168" stroke-width="2.5" />
+    <!-- Detalhes do ticket -->
+    <line x1="25" y1="26" x2="65" y2="26" stroke="#D9531E" stroke-width="3" stroke-linecap="round" />
+    <line x1="25" y1="40" x2="55" y2="40" stroke="#E1BFB5" stroke-width="2" stroke-linecap="round" />
+    <line x1="25" y1="52" x2="60" y2="52" stroke="#E1BFB5" stroke-width="2" stroke-linecap="round" />
+    <line x1="25" y1="64" x2="45" y2="64" stroke="#E1BFB5" stroke-width="2" stroke-linecap="round" />
+    <!-- Selo de fogão na comanda -->
+    <circle cx="45" cy="82" r="10" fill="#F2A900" opacity="0.3" />
+    <path d="M45 76 C48 80 50 82 50 85 C50 88 48 89 45 89 C42 89 40 88 40 85 C40 82 42 80 45 76 Z" fill="#D9531E" />
+  </g>
+</svg>

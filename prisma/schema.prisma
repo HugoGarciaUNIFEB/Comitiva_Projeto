@@ -1,0 +1,206 @@
+// Prisma Schema para PostgreSQL (Neon) - Comitiva Fogo de Chão (Projeto InovaFood Tech)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// -------------------------------------------------------------
+// Usuários e Autenticação
+// -------------------------------------------------------------
+model User {
+  id                  String               @id @default(cuid())
+  name                String
+  whatsapp            String               @unique // Chave principal de identificação do cliente
+  email               String?
+  password            String               // Hash bcrypt
+  role                String               @default("cliente") // "cliente" | "admin"
+  points              Int                  @default(0) // Saldo de pontos no programa de fidelidade
+  welcomeSpins        Int                  @default(1) // 1 giro adicional de boas-vindas na criação da conta
+  avatar              String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  addresses           Address[]
+  orders              Order[]
+  coupons             Coupon[]
+  spins               RouletteSpin[]
+  loyaltyTransactions LoyaltyTransaction[]
+}
+
+// -------------------------------------------------------------
+// Endereços de Entrega do Usuário
+// -------------------------------------------------------------
+model Address {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  street       String
+  number       String
+  neighborhood String
+  complement   String?
+  reference    String?
+  recipient    String?
+  phone        String?
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+// -------------------------------------------------------------
+// Cardápio e Produtos
+// -------------------------------------------------------------
+model Product {
+  id             String        @id @default(cuid())
+  name           String
+  description    String
+  imageUrl       String
+  category       String        // "marmita" | "complemento" | "bebida" | "sobremesa"
+  isDailySpecial Boolean       @default(false) // Prato do Dia com destaque especial
+  isPaused       Boolean       @default(false) // Pausa emergencial em até 5 segundos
+  fireTime       String?       // Ex: "4h de brasa lenta"
+  servingsLeft   Int?          // Porções disponíveis no tacho
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  sizes          ProductSize[]
+  sides          Side[]
+  orderItems     OrderItem[]
+}
+
+// -------------------------------------------------------------
+// Tamanhos e Preços dos Pratos (P, M, G ou ÚNICO)
+// -------------------------------------------------------------
+model ProductSize {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size      String   // "P" | "M" | "G" | "UNICO"
+  price     Float
+  weight    String   // Ex: "400 g", "550 g", "700 g"
+}
+
+// -------------------------------------------------------------
+// Guarnições Inclusas e Complementos Adicionais
+// -------------------------------------------------------------
+model Side {
+  id        String   @id @default(cuid())
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String   // Ex: "Arroz carreteiro", "Feijão tropeiro", "Torresmo"
+  type      String   // "INCLUDED" (guarnição inclusa) | "ADDITIONAL" (extra pago)
+  price     Float    @default(0.0) // 0 se inclusa, valor se adicional
+  isPaused  Boolean  @default(false) // Pausa emergencial individual
+}
+
+// -------------------------------------------------------------
+// Pedidos
+// -------------------------------------------------------------
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     Int         @unique // Sequencial legível: 101, 102...
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerName    String
+  customerPhone   String
+  orderType       String      // "DELIVERY" | "PICKUP" | "COUNTER"
+  channel         String      // "APP" | "BALCAO" | "WHATSAPP" | "TELEFONE"
+  status          String      @default("AGUARDANDO") // "AGUARDANDO" | "NO_FOGAO" | "PRONTO" | "ENTREGUE" | "CANCELADO"
+  paymentMethod   String      // "PIX" | "CARD" | "CASH"
+  paymentStatus   String      @default("PENDING") // "PENDING" | "PAID"
+  subtotal        Float
+  deliveryFee     Float       @default(5.00)
+  discount        Float       @default(0.00)
+  total           Float
+  changeFor       Float?      // Valor informado para troco em dinheiro
+  couponCode      String?
+  deliveryAddress String?
+  notes           String?
+  pointsEarned    Int         @default(0) // R$ 1,00 = 1 ponto (creditado ao entregar)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  items           OrderItem[]
+}
+
+// -------------------------------------------------------------
+// Itens do Pedido
+// -------------------------------------------------------------
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product @relation(fields: [productId], references: [id])
+  productName    String
+  size           String? // "P" | "M" | "G" | "UNICO"
+  unitPrice      Float
+  quantity       Int     @default(1)
+  totalPrice     Float
+  includedSides  String? // Lista de guarnições inclusas marcadas (JSON string)
+  addedSides     String? // Lista de adicionais extras escolhidos (JSON string)
+  observations   String?
+}
+
+// -------------------------------------------------------------
+// Cupons de Desconto
+// -------------------------------------------------------------
+model Coupon {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  description   String
+  discountType  String   // "PERCENT" | "FIXED" | "FREE_SHIPPING" | "FREE_MEAL_P"
+  discountValue Float    @default(0) // Valor em % ou R$
+  userId        String?  // Vinculado à carteira do usuário (quando emitido pela roleta)
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isUsed        Boolean  @default(false)
+  expiresAt     DateTime // Válido até as 13h00 (America/Sao_Paulo)
+  createdAt     DateTime @default(now())
+}
+
+// -------------------------------------------------------------
+// Giros na Roleta Caipira da Sorte
+// -------------------------------------------------------------
+model RouletteSpin {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prize         String   // Nome do prêmio (ex: "15% OFF", "Marmita P Grátis")
+  prizeType     String   // "PERCENT_10" | "PERCENT_15" | "FREE_SHIPPING" | "POINTS_50" | "FREE_MEAL_P"
+  prizeValue    Float
+  couponCode    String?
+  isWelcomeSpin Boolean  @default(false) // Se foi o giro de boas-vindas
+  createdAt     DateTime @default(now())
+}
+
+// -------------------------------------------------------------
+// Histórico / Extrato de Pontos de Fidelidade
+// -------------------------------------------------------------
+model LoyaltyTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  points      Int      // Positivo (crédito) ou negativo (resgate)
+  type        String   // "ORDER_EARN" | "REWARD_REDEEM" | "ROULETTE_PRIZE"
+  description String
+  orderId     String?
+  createdAt   DateTime @default(now())
+}
+
+// -------------------------------------------------------------
+// Catálogo de Prêmios para Troca de Pontos
+// -------------------------------------------------------------
+model Reward {
+  id          String   @id @default(cuid())
+  title       String   // Ex: "Sobremesa do Tacho", "Marmita P Caipira"
+  description String
+  pointsCost  Int      // 100, 120, 300, 450, 80
+  rewardType  String   // "DESSERT" | "BEVERAGE" | "MEAL_P" | "MEAL_G" | "FREE_SHIPPING"
+  isActive    Boolean  @default(true)
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+}
