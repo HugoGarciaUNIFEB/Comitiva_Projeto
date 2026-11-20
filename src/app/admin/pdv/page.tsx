@@ -337,9 +337,9 @@ export default function AdminPDVPage() {
     <div className="flex min-h-screen bg-surface">
       <AdminSidebar />
 
-      <div className="pl-72 flex flex-col flex-1 min-w-0">
+      <div className="pt-16 lg:pt-0 lg:pl-72 flex flex-col flex-1 min-w-0 max-w-full overflow-x-hidden">
         {/* Top Header */}
-        <header className="h-16 px-gutter-lg flex items-center justify-between bg-surface-container-lowest/90 backdrop-blur-xl border-b border-surface-container shadow-sm sticky top-0 z-30">
+        <header className="h-16 px-4 sm:px-gutter-lg flex items-center justify-between bg-surface-container-lowest/90 backdrop-blur-xl border-b border-surface-container shadow-sm sticky top-0 z-30">
           <div className="flex items-center gap-space-lg">
             <div className="flex items-center gap-space-xs text-on-surface-variant">
               <Receipt className="w-5 h-5 text-primary" />
@@ -359,30 +359,41 @@ export default function AdminPDVPage() {
         </header>
 
         {/* Action Bar */}
-        <div className="px-gutter-lg py-space-md bg-surface-container-low flex flex-wrap items-center justify-between gap-space-md border-b border-surface-container">
+        <div className="px-4 sm:px-gutter-lg py-space-md bg-surface-container-low flex flex-wrap items-center justify-between gap-space-md border-b border-surface-container">
           <div className="flex items-center gap-space-md">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm shrink-0">
               <Receipt className="w-6 h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-space-xs">
+              <div className="flex items-center gap-space-xs flex-wrap">
                 <h1 className="font-headline-md text-headline-md text-on-surface font-bold">Atendimento de Balcão &amp; PDV</h1>
-                <span className="bg-tertiary text-on-tertiary font-label-sm text-label-sm px-2 py-0.5 rounded-full uppercase tracking-wider">Turno Ativo</span>
+                <span className="bg-tertiary text-on-tertiary font-label-sm text-label-sm px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">Turno Ativo</span>
               </div>
               <p className="font-body-sm text-body-sm text-on-surface-variant">
-                Lançamento ágil de pedidos presenciais, WhatsApp e chamadas telefônicas
+                Lançamento ágil de pedidos presenciais, WhatsApp e telefone
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-space-sm">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById("comanda-section");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="lg:hidden flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 text-primary font-label-md text-xs font-bold min-h-[44px] cursor-pointer"
+            >
+              <Receipt className="w-4 h-4" />
+              <span>Ver Comanda (R$ {totalOrder.toFixed(2).replace(".", ",")})</span>
+            </button>
             <button
               type="button"
               onClick={resetForm}
-              className="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant transition-colors font-label-md text-label-md"
+              className="flex items-center gap-1.5 px-3 sm:px-space-md py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant transition-colors font-label-md text-xs sm:text-label-md min-h-[44px] cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
-              <span>Limpar Campos</span>
+              <span>Limpar</span>
             </button>
           </div>
         </div>
@@ -403,7 +414,7 @@ export default function AdminPDVPage() {
         )}
 
         {/* Main Grid Workspace */}
-        <main className="p-gutter-lg grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg max-w-[1600px] w-full">
+        <main className="p-4 sm:p-gutter-lg pb-28 lg:pb-16 grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg max-w-[1600px] w-full">
           {/* LEFT COLUMN: Fast Order Entry Form (Cols 7) */}
           <section className="lg:col-span-7 flex flex-col gap-space-lg">
             {/* Bloco 1: Dados do Comensal e Canal */}
@@ -429,7 +440,7 @@ export default function AdminPDVPage() {
                   <button
                     type="button"
                     onClick={() => setChannel("COUNTER")}
-                    className={`py-2 px-space-sm rounded-lg font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all ${
+                    className={`min-h-[44px] py-2.5 px-space-sm rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       channel === "COUNTER"
                         ? "bg-primary-container text-on-primary-container font-bold shadow-sm"
                         : "bg-surface-container text-on-surface hover:bg-surface-container-high"
@@ -442,7 +453,7 @@ export default function AdminPDVPage() {
                   <button
                     type="button"
                     onClick={() => setChannel("WHATSAPP")}
-                    className={`py-2 px-space-sm rounded-lg font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all ${
+                    className={`min-h-[44px] py-2.5 px-space-sm rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       channel === "WHATSAPP"
                         ? "bg-primary-container text-on-primary-container font-bold shadow-sm"
                         : "bg-surface-container text-on-surface hover:bg-surface-container-high"
@@ -455,7 +466,7 @@ export default function AdminPDVPage() {
                   <button
                     type="button"
                     onClick={() => setChannel("PHONE")}
-                    className={`py-2 px-space-sm rounded-lg font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all ${
+                    className={`min-h-[44px] py-2.5 px-space-sm rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       channel === "PHONE"
                         ? "bg-primary-container text-on-primary-container font-bold shadow-sm"
                         : "bg-surface-container text-on-surface hover:bg-surface-container-high"
@@ -474,7 +485,7 @@ export default function AdminPDVPage() {
                   <button
                     type="button"
                     onClick={() => setModality("PICKUP")}
-                    className={`py-2.5 px-space-sm rounded-lg font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm transition-all ${
+                    className={`min-h-[44px] py-2.5 px-space-sm rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer ${
                       modality === "PICKUP"
                         ? "bg-primary-container text-on-primary-container font-bold ring-2 ring-primary"
                         : "bg-surface-container text-on-surface hover:bg-surface-container-high"
@@ -487,7 +498,7 @@ export default function AdminPDVPage() {
                   <button
                     type="button"
                     onClick={() => setModality("DINE_IN")}
-                    className={`py-2.5 px-space-sm rounded-lg font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all ${
+                    className={`min-h-[44px] py-2.5 px-space-sm rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       modality === "DINE_IN"
                         ? "bg-primary-container text-on-primary-container font-bold ring-2 ring-primary shadow-sm"
                         : "bg-surface-container text-on-surface hover:bg-surface-container-high"
@@ -500,7 +511,7 @@ export default function AdminPDVPage() {
                   <button
                     type="button"
                     onClick={() => setModality("DELIVERY")}
-                    className={`py-2.5 px-space-sm rounded-lg font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all ${
+                    className={`min-h-[44px] py-2.5 px-space-sm rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       modality === "DELIVERY"
                         ? "bg-primary-container text-on-primary-container font-bold ring-2 ring-primary shadow-sm"
                         : "bg-surface-container text-on-surface hover:bg-surface-container-high"
@@ -590,7 +601,7 @@ export default function AdminPDVPage() {
                       key={cat.id}
                       type="button"
                       onClick={() => setSelectedCategory(cat.id)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                      className={`min-h-[40px] px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center ${
                         selectedCategory === cat.id
                           ? "bg-primary text-on-primary shadow-xs"
                           : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
@@ -654,7 +665,7 @@ export default function AdminPDVPage() {
                           key={s.id}
                           type="button"
                           onClick={() => setSelectedSize(s)}
-                          className={`p-space-md rounded-xl transition-all flex flex-col items-center justify-center gap-0.5 ${
+                          className={`p-space-md min-h-[58px] rounded-xl transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${
                             isChosen
                               ? "bg-primary-container text-on-primary-container shadow-md ring-2 ring-primary font-bold"
                               : "bg-surface-container text-on-surface hover:bg-surface-container-high"
@@ -742,7 +753,7 @@ export default function AdminPDVPage() {
                       key={item.id}
                       type="button"
                       onClick={() => toggleAddon(item)}
-                      className={`p-space-md rounded-xl flex items-center justify-between transition-all ${
+                      className={`p-space-md min-h-[48px] rounded-xl flex items-center justify-between transition-all cursor-pointer ${
                         isSelected
                           ? "bg-primary-container text-on-primary-container ring-2 ring-primary font-bold shadow-sm"
                           : "bg-surface-container text-on-surface hover:bg-surface-container-high"
@@ -784,7 +795,7 @@ export default function AdminPDVPage() {
           {/* RIGHT COLUMN: Digital Order Ticket & Instant Checkout (Cols 5) */}
           <aside className="lg:col-span-5 flex flex-col gap-space-lg">
             {/* Authentic Comanda Digital Card */}
-            <div className="bg-surface-container-lowest rounded-2xl shadow-lg overflow-hidden flex flex-col relative border border-surface-container">
+            <div id="comanda-section" className="bg-surface-container-lowest rounded-2xl shadow-lg overflow-hidden flex flex-col relative border border-surface-container scroll-mt-20">
               {/* Parchment Edge Line */}
               <div className="h-2 bg-gradient-to-r from-primary via-primary-container to-tertiary"></div>
 
@@ -894,40 +905,40 @@ export default function AdminPDVPage() {
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("PIX")}
-                      className={`pay-btn p-2 rounded-lg flex flex-col items-center justify-center gap-1 transition-colors ${
+                      className={`pay-btn min-h-[48px] p-2 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors cursor-pointer ${
                         paymentMethod === "PIX"
                           ? "bg-primary-container text-on-primary-container font-bold shadow-sm"
                           : "bg-surface-container text-on-surface hover:bg-surface-container-high"
                       }`}
                     >
                       <QrCode className="w-5 h-5 text-tertiary" />
-                      <span className="font-label-sm text-label-sm">PIX</span>
+                      <span className="font-label-sm text-label-sm font-bold">PIX</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("CARD")}
-                      className={`pay-btn p-2 rounded-lg flex flex-col items-center justify-center gap-1 transition-colors ${
+                      className={`pay-btn min-h-[48px] p-2 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors cursor-pointer ${
                         paymentMethod === "CARD"
                           ? "bg-primary-container text-on-primary-container font-bold shadow-sm"
                           : "bg-surface-container text-on-surface hover:bg-surface-container-high"
                       }`}
                     >
                       <CreditCard className="w-5 h-5 text-secondary" />
-                      <span className="font-label-sm text-label-sm">Maquininha</span>
+                      <span className="font-label-sm text-label-sm font-bold">Maquininha</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("CASH")}
-                      className={`pay-btn p-2 rounded-lg flex flex-col items-center justify-center gap-1 transition-colors ${
+                      className={`pay-btn min-h-[48px] p-2 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors cursor-pointer ${
                         paymentMethod === "CASH"
                           ? "bg-primary-container text-on-primary-container font-bold shadow-sm"
                           : "bg-surface-container text-on-surface hover:bg-surface-container-high"
                       }`}
                     >
-                      <Banknote className="w-5 h-5" />
-                      <span className="font-label-sm text-label-sm">Dinheiro</span>
+                      <Banknote className="w-5 h-5 text-primary" />
+                      <span className="font-label-sm text-label-sm font-bold">Dinheiro</span>
                     </button>
                   </div>
                 </div>
@@ -1063,6 +1074,45 @@ export default function AdminPDVPage() {
             </div>
           </aside>
         </main>
+
+        {/* Barra Fixa de Comanda Rápida para Mobile / Tablet (< lg) */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/30 shadow-2xl p-3 flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("comanda-section");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="flex flex-col text-left cursor-pointer min-h-[44px] justify-center px-1"
+          >
+            <span className="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant font-bold flex items-center gap-1">
+              <Receipt className="w-3.5 h-3.5 text-primary" />
+              <span>Ver Comanda</span>
+            </span>
+            <span className="font-headline-sm text-base text-primary font-extrabold leading-tight">
+              R$ {totalOrder.toFixed(2).replace(".", ",")}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              // Se for pagamento em dinheiro e valor insuficiente, rola para a calculadora de troco
+              if (paymentMethod === "CASH" && cashVal < totalOrder) {
+                const el = document.getElementById("comanda-section");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              } else {
+                handleSendToKDS();
+              }
+            }}
+            disabled={submitting}
+            className="flex-1 min-h-[44px] px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+          >
+            <Flame className="w-5 h-5 shrink-0" />
+            <span>{submitting ? "ENVIANDO..." : "Enviar p/ Cozinha"}</span>
+            <ArrowRight className="w-4 h-4 shrink-0" />
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -350,9 +350,9 @@ export default function AdminCardapioPage() {
     <div className="flex min-h-screen bg-surface">
       <AdminSidebar />
 
-      <div className="pl-72 flex flex-col flex-1 min-w-0">
+      <div className="pt-16 lg:pt-0 lg:pl-72 flex flex-col flex-1 min-w-0 max-w-full overflow-x-hidden">
         {/* Top Header */}
-        <header className="h-16 px-gutter-lg flex items-center justify-between bg-surface-container-lowest/90 backdrop-blur-xl border-b border-surface-container shadow-sm sticky top-0 z-30">
+        <header className="h-16 px-4 sm:px-gutter-lg flex items-center justify-between bg-surface-container-lowest/90 backdrop-blur-xl border-b border-surface-container shadow-sm sticky top-0 z-30">
           <div className="flex items-center gap-space-lg">
             <div className="flex items-center gap-space-xs text-on-surface-variant">
               <Utensils className="w-5 h-5 text-primary" />
@@ -373,14 +373,14 @@ export default function AdminCardapioPage() {
 
         {/* Notificação flutuante de feedback */}
         {feedbackMsg && (
-          <div className="mx-gutter-lg mt-space-md p-space-md bg-primary-container text-on-primary-container rounded-xl flex items-center gap-space-sm font-label-md text-label-md shadow-md animate-fade-in">
+          <div className="mx-4 sm:mx-gutter-lg mt-space-md p-space-md bg-primary-container text-on-primary-container rounded-xl flex items-center gap-space-sm font-label-md text-label-md shadow-md animate-fade-in">
             <CheckCircle2 className="w-5 h-5" />
             <span>{feedbackMsg}</span>
           </div>
         )}
 
         <main className="w-full pt-4 bg-surface pb-16">
-          <div className="flex flex-col w-full px-gutter-lg py-space-md gap-space-lg max-w-[1600px]">
+          <div className="flex flex-col w-full px-4 sm:px-gutter-lg py-space-md gap-space-lg max-w-[1600px]">
             {/* Banner: Modo Almoço em Tempo Real */}
             <div className="w-full bg-surface-container-highest rounded-xl p-space-md flex flex-col md:flex-row items-start md:items-center justify-between gap-space-sm shadow-sm border border-surface-container">
               <div className="flex items-center gap-space-sm">
@@ -428,7 +428,7 @@ export default function AdminCardapioPage() {
                 <button
                   type="button"
                   onClick={openNewDishModal}
-                  className="flex-1 lg:flex-none bg-surface-container-highest hover:bg-surface-dim text-on-surface font-label-lg text-label-lg px-4 py-2.5 rounded-lg flex items-center justify-center gap-space-xs transition-colors shadow-sm font-bold"
+                  className="w-full sm:w-auto min-h-[44px] bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg px-5 py-2.5 rounded-xl flex items-center justify-center gap-space-xs transition-colors shadow-md font-bold cursor-pointer"
                 >
                   <PlusCircle className="w-5 h-5" />
                   <span>+ Novo Prato / Item</span>
@@ -674,13 +674,13 @@ export default function AdminCardapioPage() {
                             </div>
                           </div>
 
-                          <div className="flex flex-wrap sm:flex-nowrap items-center gap-space-md">
+                          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-md w-full lg:w-auto">
                             {/* Valores de Preço */}
-                            <div className="flex items-center gap-space-xs bg-surface-container-low p-space-xs rounded-lg border border-surface-container">
+                            <div className="flex items-center gap-space-xs bg-surface-container-low p-2 rounded-xl border border-surface-container justify-around">
                               {hasStandardSizes ? (
                                 <>
                                   <div className="flex flex-col text-center px-2">
-                                    <span className="font-label-sm text-label-sm text-on-surface-variant">P</span>
+                                    <span className="font-label-sm text-label-sm text-on-surface-variant font-bold">P</span>
                                     <span className="font-label-md text-label-md text-on-surface font-bold">
                                       R$ {pSize.toFixed(2).replace(".", ",")}
                                     </span>
@@ -694,7 +694,7 @@ export default function AdminCardapioPage() {
                                   </div>
                                   <div className="h-6 w-px bg-surface-variant"></div>
                                   <div className="flex flex-col text-center px-2">
-                                    <span className="font-label-sm text-label-sm text-on-surface-variant">G</span>
+                                    <span className="font-label-sm text-label-sm text-on-surface-variant font-bold">G</span>
                                     <span className="font-label-md text-label-md text-on-surface font-bold">
                                       R$ {gSize.toFixed(2).replace(".", ",")}
                                     </span>
@@ -713,20 +713,20 @@ export default function AdminCardapioPage() {
                             </div>
 
                             {/* Botões de Ação */}
-                            <div className="flex items-center gap-space-sm">
+                            <div className="flex items-center gap-2">
                               <button
                                 type="button"
                                 onClick={() => openEditDishModal(dish)}
-                                className="bg-surface-container hover:bg-surface-container-high text-secondary font-label-md text-label-md px-3 py-2 rounded-lg flex items-center gap-1 transition-colors font-semibold"
+                                className="flex-1 sm:flex-none min-h-[44px] bg-surface-container hover:bg-surface-container-high text-secondary font-label-md text-label-md px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 transition-colors font-bold cursor-pointer"
                               >
                                 <Edit3 className="w-4 h-4" />
-                                Editar
+                                <span>Editar</span>
                               </button>
 
                               <button
                                 type="button"
                                 onClick={() => toggleProductPause(dish.id)}
-                                className={`font-label-md text-label-md px-3 py-2 rounded-lg flex items-center gap-1 transition-colors font-semibold ${
+                                className={`flex-1 sm:flex-none min-h-[44px] font-label-md text-label-md px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 transition-colors font-bold cursor-pointer ${
                                   dish.isPaused
                                     ? "bg-primary text-on-primary hover:bg-primary-container"
                                     : "bg-surface-container-highest hover:bg-error-container text-on-surface hover:text-on-error-container"
@@ -804,27 +804,28 @@ export default function AdminCardapioPage() {
 
       {/* MODAL DE CADASTRO / EDIÇÃO DE PRATO (Tela 9 do Stitch) */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-surface-container-lowest w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-surface-container">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-surface-container-lowest w-full max-w-2xl sm:rounded-2xl rounded-none shadow-2xl overflow-hidden flex flex-col h-full sm:h-auto sm:max-h-[90vh] border border-surface-container">
             {/* Modal Header */}
-            <div className="px-space-lg py-space-md bg-surface-container-low flex items-center justify-between border-b border-surface-container">
+            <div className="px-4 sm:px-space-lg py-3 sm:py-space-md bg-surface-container-low flex items-center justify-between border-b border-surface-container shrink-0">
               <div className="flex items-center gap-space-xs">
                 <Utensils className="w-6 h-6 text-primary" />
-                <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">
+                <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold text-base sm:text-lg">
                   {editingProduct ? "Editar Prato do Fogão" : "Cadastrar Novo Prato da Comitiva"}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant cursor-pointer"
+                className="w-10 h-10 min-h-[44px] min-w-[44px] rounded-xl bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant cursor-pointer"
+                aria-label="Fechar modal"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Body Form */}
-            <form onSubmit={handleSaveModal} className="p-space-lg flex flex-col gap-space-md overflow-y-auto">
+            <form onSubmit={handleSaveModal} className="p-4 sm:p-space-lg flex flex-col gap-space-md overflow-y-auto flex-1">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
                 <div className="flex flex-col gap-1">
                   <label className="font-label-md text-label-md text-on-surface font-bold">Nome do Prato *</label>
@@ -999,18 +1000,18 @@ export default function AdminCardapioPage() {
               </label>
 
               {/* Botões do Footer */}
-              <div className="flex items-center justify-end gap-space-sm pt-space-md border-t border-surface-container">
+              <div className="flex items-center justify-end gap-space-sm pt-space-md border-t border-surface-container shrink-0">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md font-semibold transition-colors"
+                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md font-bold transition-colors cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={savingDish}
-                  className="px-6 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold shadow-md transition-all disabled:opacity-50"
+                  className="min-h-[44px] px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold shadow-md transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {savingDish ? "Salvando..." : editingProduct ? "Salvar Alterações" : "Cadastrar Prato"}
                 </button>

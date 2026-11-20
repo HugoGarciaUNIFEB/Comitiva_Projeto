@@ -39,11 +39,13 @@ import {
   AlertCircle,
   ChevronDown,
   ChevronUp,
+  X,
 } from "lucide-react";
 import {
   getOrderChannelLabel,
   formatCurrency,
   formatPaymentMethod,
+  isTodaySaoPaulo,
 } from "@/lib/orderStatus";
 
 interface OrderItem {
@@ -81,6 +83,7 @@ interface Order {
   pointsEarned?: number;
   createdAt: string;
   updatedAt?: string;
+  isDeliveredToday?: boolean;
   items: OrderItem[];
 }
 
@@ -105,9 +108,15 @@ interface OrderCardProps {
   order: Order;
   onUpdateStatus: (orderId: string, nextStatus: Order["status"]) => void;
   isUpdating: boolean;
+  isHighlighted?: boolean;
 }
 
-function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProps) {
+function DraggableOrderCard({
+  order,
+  onUpdateStatus,
+  isUpdating,
+  isHighlighted = false,
+}: OrderCardProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: order.id,
     data: { order },
@@ -127,10 +136,13 @@ function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProp
 
   return (
     <div
+      id={`order-card-${order.id}`}
       ref={setNodeRef}
       style={style}
       className={`flex flex-col bg-surface-container-lowest rounded-2xl p-4 shadow-sm border transition-all relative overflow-hidden ${
-        isDragging
+        isHighlighted
+          ? "ring-4 ring-primary bg-primary/10 border-primary scale-[1.01] shadow-xl animate-pulse"
+          : isDragging
           ? "opacity-30 border-dashed border-primary"
           : "border-outline-variant/30 hover:border-primary/40 hover:shadow-md"
       }`}
@@ -157,8 +169,9 @@ function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProp
           <div
             {...attributes}
             {...listeners}
-            className="p-1 -ml-1 text-on-surface-variant/60 hover:text-on-surface hover:bg-surface-container-high rounded-lg cursor-grab active:cursor-grabbing touch-none select-none"
+            className="p-2 -ml-1 text-on-surface-variant/70 hover:text-on-surface hover:bg-surface-container-high rounded-xl cursor-grab active:cursor-grabbing touch-none select-none min-h-[44px] min-w-[38px] flex items-center justify-center"
             title="Arraste para mover entre colunas"
+            aria-label="Arrastar pedido"
           >
             <GripVertical className="w-4 h-4" />
           </div>
@@ -322,7 +335,7 @@ function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProp
           <button
             onClick={() => onUpdateStatus(order.id, "NO_FOGAO")}
             disabled={isUpdating}
-            className="w-full min-h-[42px] py-2 px-3 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
+            className="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
           >
             <span>Mover para o Fogão</span>
             <ArrowRight className="w-4 h-4" />
@@ -335,7 +348,7 @@ function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProp
             <button
               onClick={() => onUpdateStatus(order.id, "AGUARDANDO")}
               disabled={isUpdating}
-              className="min-h-[42px] px-2.5 rounded-xl bg-surface-container hover:bg-surface-container-highest text-on-surface-variant font-label-sm text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer"
+              className="min-h-[44px] px-3 rounded-xl bg-surface-container hover:bg-surface-container-highest text-on-surface-variant font-label-sm text-xs font-bold flex items-center gap-1 transition-all cursor-pointer"
               title="Voltar para Aguardando"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -344,7 +357,7 @@ function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProp
             <button
               onClick={() => onUpdateStatus(order.id, "PRONTO")}
               disabled={isUpdating}
-              className="flex-1 min-h-[42px] py-2 px-3 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
+              className="flex-1 min-h-[44px] py-2.5 px-3 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
             >
               <PackageCheck className="w-4 h-4" />
               <span>Concluir p/ Bancada</span>
@@ -358,7 +371,7 @@ function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProp
             <button
               onClick={() => onUpdateStatus(order.id, "NO_FOGAO")}
               disabled={isUpdating}
-              className="min-h-[42px] px-2.5 rounded-xl bg-surface-container hover:bg-surface-container-highest text-on-surface-variant font-label-sm text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer"
+              className="min-h-[44px] px-3 rounded-xl bg-surface-container hover:bg-surface-container-highest text-on-surface-variant font-label-sm text-xs font-bold flex items-center gap-1 transition-all cursor-pointer"
               title="Voltar para No Fogão"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -368,7 +381,7 @@ function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProp
               <button
                 onClick={() => onUpdateStatus(order.id, "EM_ROTA")}
                 disabled={isUpdating}
-                className="flex-1 min-h-[42px] py-2 px-3 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
+                className="flex-1 min-h-[44px] py-2.5 px-3 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
               >
                 <Bike className="w-4 h-4" />
                 <span>Saí para Entrega</span>
@@ -377,7 +390,7 @@ function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProp
               <button
                 onClick={() => onUpdateStatus(order.id, "ENTREGUE")}
                 disabled={isUpdating}
-                className="flex-1 min-h-[42px] py-2 px-3 rounded-xl bg-secondary hover:bg-on-surface-variant text-on-secondary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
+                className="flex-1 min-h-[44px] py-2.5 px-3 rounded-xl bg-secondary hover:bg-on-surface-variant text-on-secondary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
               >
                 <CheckCheck className="w-4 h-4" />
                 <span>Entregar ao Balcão</span>
@@ -392,7 +405,7 @@ function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProp
             <button
               onClick={() => onUpdateStatus(order.id, "PRONTO")}
               disabled={isUpdating}
-              className="min-h-[42px] px-2.5 rounded-xl bg-surface-container hover:bg-surface-container-highest text-on-surface-variant font-label-sm text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer"
+              className="min-h-[44px] px-3 rounded-xl bg-surface-container hover:bg-surface-container-highest text-on-surface-variant font-label-sm text-xs font-bold flex items-center gap-1 transition-all cursor-pointer"
               title="Voltar para Pronto"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -401,7 +414,7 @@ function DraggableOrderCard({ order, onUpdateStatus, isUpdating }: OrderCardProp
             <button
               onClick={() => onUpdateStatus(order.id, "ENTREGUE")}
               disabled={isUpdating}
-              className="flex-1 min-h-[42px] py-2 px-3 rounded-xl bg-secondary hover:bg-on-surface-variant text-on-secondary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
+              className="flex-1 min-h-[44px] py-2.5 px-3 rounded-xl bg-secondary hover:bg-on-surface-variant text-on-secondary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
             >
               <CheckCheck className="w-4 h-4" />
               <span>Marcar como Entregue</span>
@@ -484,6 +497,15 @@ function DroppableColumn({
 // -------------------------------------------------------------
 // Página Principal do KDS
 // -------------------------------------------------------------
+interface MobileToastInfo {
+  id: string;
+  orderNumber: number;
+  targetStatus: Order["status"];
+  targetStatusLabel: string;
+  isDelivered: boolean;
+  points: number;
+}
+
 export default function KdsPage() {
   const [data, setData] = useState<KdsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -495,6 +517,61 @@ export default function KdsPage() {
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
   const [mobileTab, setMobileTab] = useState<"AGUARDANDO" | "NO_FOGAO" | "PRONTO" | "EM_ROTA">("AGUARDANDO");
   const [showCompleted, setShowCompleted] = useState(false);
+  const [highlightedOrderId, setHighlightedOrderId] = useState<string | null>(null);
+  const [pulsingTab, setPulsingTab] = useState<string | null>(null);
+  const [mobileToast, setMobileToast] = useState<MobileToastInfo | null>(null);
+
+  useEffect(() => {
+    if (!mobileToast) return;
+    const timer = setTimeout(() => {
+      setMobileToast(null);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [mobileToast]);
+
+  const getStatusShortName = (status: Order["status"]) => {
+    switch (status) {
+      case "AGUARDANDO":
+        return "Aguardando";
+      case "NO_FOGAO":
+        return "No Fogão";
+      case "PRONTO":
+        return "Pronto";
+      case "EM_ROTA":
+        return "Em Rota";
+      case "ENTREGUE":
+        return "Entregue";
+      default:
+        return status;
+    }
+  };
+
+  const handleViewMovedOrder = (toast: MobileToastInfo) => {
+    if (
+      toast.targetStatus === "AGUARDANDO" ||
+      toast.targetStatus === "NO_FOGAO" ||
+      toast.targetStatus === "PRONTO" ||
+      toast.targetStatus === "EM_ROTA"
+    ) {
+      setMobileTab(toast.targetStatus);
+    } else if (toast.targetStatus === "ENTREGUE") {
+      setShowCompleted(true);
+    }
+
+    setHighlightedOrderId(toast.id);
+    setTimeout(() => {
+      const el = document.getElementById(`order-card-${toast.id}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 100);
+
+    setTimeout(() => {
+      setHighlightedOrderId((curr) => (curr === toast.id ? null : curr));
+    }, 2100);
+
+    setMobileToast(null);
+  };
 
   // Sensores DnD com constraints para não conflitar com cliques
   const pointerSensor = useSensor(PointerSensor, {
@@ -558,7 +635,16 @@ export default function KdsPage() {
       if (!prev) return prev;
       return {
         ...prev,
-        orders: prev.orders.map((o) => (o.id === orderId ? { ...o, status: nextStatus } : o)),
+        orders: prev.orders.map((o) =>
+          o.id === orderId
+            ? {
+                ...o,
+                status: nextStatus,
+                isDeliveredToday: nextStatus === "ENTREGUE",
+                updatedAt: new Date().toISOString(),
+              }
+            : o
+        ),
       };
     });
 
@@ -574,6 +660,31 @@ export default function KdsPage() {
 
       if (res.ok) {
         const json = await res.json();
+        // Destaca o cartão por 2 segundos na nova coluna
+        setHighlightedOrderId(orderId);
+        setTimeout(() => {
+          setHighlightedOrderId((cur) => (cur === orderId ? null : cur));
+        }, 2000);
+
+        // No celular/tablet (onde as abas são usadas), aciona animação de pulso na aba de destino e o toast inferior
+        const isDesktop = typeof window !== "undefined" && window.innerWidth >= 1280;
+        if (!isDesktop) {
+          if (nextStatus !== "ENTREGUE") {
+            setPulsingTab(nextStatus);
+            setTimeout(() => setPulsingTab(null), 1200);
+          }
+
+          const pts = targetOrder.pointsEarned || Math.round(targetOrder.total);
+          setMobileToast({
+            id: orderId,
+            orderNumber: targetOrder.orderNumber,
+            targetStatus: nextStatus,
+            targetStatusLabel: getStatusShortName(nextStatus),
+            isDelivered: nextStatus === "ENTREGUE",
+            points: pts,
+          });
+        }
+
         if (nextStatus === "ENTREGUE") {
           setSuccessMessage(`Pedido #${targetOrder.orderNumber} marcado como entregue! Pontos creditados ao cliente.`);
           setTimeout(() => setSuccessMessage(null), 4000);
@@ -642,16 +753,18 @@ export default function KdsPage() {
   const colNoFogao = filteredOrders.filter((o) => o.status === "NO_FOGAO");
   const colPronto = filteredOrders.filter((o) => o.status === "PRONTO");
   const colEmRota = filteredOrders.filter((o) => o.status === "EM_ROTA");
-  const colEntregues = filteredOrders.filter((o) => o.status === "ENTREGUE");
+  const colEntregues = filteredOrders.filter(
+    (o) => o.status === "ENTREGUE" && (o.isDeliveredToday ?? isTodaySaoPaulo(o.updatedAt))
+  );
 
   return (
     <div className="min-h-screen bg-surface font-body-md text-on-surface antialiased flex">
       <AdminSidebar />
 
       {/* Main Container deslocado pela largura da sidebar desktop */}
-      <div className="pl-72 flex-1 flex flex-col min-w-0">
+      <div className="pt-16 lg:pt-0 lg:pl-72 flex-1 flex flex-col min-w-0 max-w-full overflow-x-hidden">
         {/* Top Header Fixo */}
-        <header className="h-20 bg-surface/90 backdrop-blur-xl border-b border-outline-variant/20 z-40 flex items-center justify-between px-8 sticky top-0">
+        <header className="min-h-[4rem] py-3 bg-surface/90 backdrop-blur-xl border-b border-outline-variant/20 z-30 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-8 sticky top-0">
           <div className="flex items-center gap-space-md">
             <div className="flex items-center gap-space-xs text-on-surface-variant font-label-md">
               <RefreshCw className={`w-5 h-5 text-tertiary ${loading ? "animate-spin" : ""}`} />
@@ -673,7 +786,7 @@ export default function KdsPage() {
               <span className="font-label-md text-label-md text-on-surface font-bold">
                 10h30 às 13h00
               </span>
-              <span className="font-body-sm text-body-sm text-on-surface-variant">
+              <span className="font-body-sm text-body-sm text-on-surface-variant hidden sm:inline">
                 | Turno Almoço Jaborandi
               </span>
             </div>
@@ -687,7 +800,7 @@ export default function KdsPage() {
                   Painel de Operações
                 </span>
               </div>
-              <div className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold shadow-sm">
+              <div className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold shadow-sm shrink-0">
                 <Flame className="w-5 h-5" />
               </div>
             </div>
@@ -695,12 +808,12 @@ export default function KdsPage() {
         </header>
 
         {/* Conteúdo Principal do KDS */}
-        <main className="p-6 md:p-8 flex-1 flex flex-col">
+        <main className="p-4 sm:p-6 md:p-8 flex-1 flex flex-col">
           {/* Sub-header Operacional / KDS Controls Bar */}
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6">
             <div className="flex flex-col">
               <div className="flex items-center gap-3">
-                <span className="inline-flex items-center justify-center p-2.5 rounded-2xl bg-primary text-on-primary shadow-sm">
+                <span className="inline-flex items-center justify-center p-2.5 rounded-2xl bg-primary text-on-primary shadow-sm shrink-0">
                   <CookingPot className="w-6 h-6" />
                 </span>
                 <div>
@@ -731,10 +844,10 @@ export default function KdsPage() {
 
             {/* Filtros e Atalho Novo Pedido Balcão */}
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center bg-surface-container-high p-1 rounded-xl shadow-inner border border-outline-variant/30">
+              <div className="flex items-center bg-surface-container-high p-1 rounded-xl shadow-inner border border-outline-variant/30 overflow-x-auto max-w-full">
                 <button
                   onClick={() => setFilterType("ALL")}
-                  className={`px-3 py-1.5 rounded-lg font-label-md text-xs md:text-sm transition-all cursor-pointer ${
+                  className={`min-h-[40px] px-3 py-1.5 rounded-lg font-label-md text-xs md:text-sm transition-all cursor-pointer whitespace-nowrap ${
                     filterType === "ALL"
                       ? "bg-surface-container-lowest text-on-surface font-bold shadow-sm"
                       : "text-on-surface-variant hover:text-on-surface"
@@ -744,7 +857,7 @@ export default function KdsPage() {
                 </button>
                 <button
                   onClick={() => setFilterType("DELIVERY")}
-                  className={`px-3 py-1.5 rounded-lg font-label-md text-xs md:text-sm transition-all cursor-pointer ${
+                  className={`min-h-[40px] px-3 py-1.5 rounded-lg font-label-md text-xs md:text-sm transition-all cursor-pointer whitespace-nowrap ${
                     filterType === "DELIVERY"
                       ? "bg-surface-container-lowest text-on-surface font-bold shadow-sm"
                       : "text-on-surface-variant hover:text-on-surface"
@@ -754,7 +867,7 @@ export default function KdsPage() {
                 </button>
                 <button
                   onClick={() => setFilterType("RETIRADA")}
-                  className={`px-3 py-1.5 rounded-lg font-label-md text-xs md:text-sm transition-all cursor-pointer ${
+                  className={`min-h-[40px] px-3 py-1.5 rounded-lg font-label-md text-xs md:text-sm transition-all cursor-pointer whitespace-nowrap ${
                     filterType === "RETIRADA"
                       ? "bg-surface-container-lowest text-on-surface font-bold shadow-sm"
                       : "text-on-surface-variant hover:text-on-surface"
@@ -766,7 +879,7 @@ export default function KdsPage() {
 
               <Link
                 href="/admin/pdv"
-                className="h-10 px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-sm flex items-center gap-2 shadow-md hover:shadow-lg transition-all"
+                className="w-full sm:w-auto min-h-[44px] px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-sm flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>Novo Pedido Balcão (PDV)</span>
@@ -866,30 +979,41 @@ export default function KdsPage() {
             </div>
           </div>
 
-          {/* Mobile Tab Selector (visível apenas em telas menores que xl) */}
-          <div className="flex xl:hidden overflow-x-auto gap-2 p-1.5 bg-surface-container-high rounded-2xl mb-4 scrollbar-none">
+          {/* Mobile Tab Selector (grid 2x2 no celular, 4 colunas no tablet, oculto no desktop) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 xl:hidden gap-2 p-1.5 bg-surface-container-high rounded-2xl mb-4">
             {[
               { id: "AGUARDANDO", label: "Aguardando", count: colAguardando.length, icon: Hourglass },
               { id: "NO_FOGAO", label: "No Fogão", count: colNoFogao.length, icon: Flame },
               { id: "PRONTO", label: "Pronto", count: colPronto.length, icon: PackageCheck },
               { id: "EM_ROTA", label: "Em Rota", count: colEmRota.length, icon: Bike },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setMobileTab(tab.id as typeof mobileTab)}
-                className={`flex-1 min-w-[110px] py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  mobileTab === tab.id
-                    ? "bg-surface-container-lowest text-on-surface shadow-sm"
-                    : "text-on-surface-variant hover:text-on-surface"
-                }`}
-              >
-                <tab.icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
-                <span className="px-1.5 py-0.2 rounded-full bg-surface-container text-[11px]">
-                  {tab.count}
-                </span>
-              </button>
-            ))}
+            ].map((tab) => {
+              const isPulsing = pulsingTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setMobileTab(tab.id as typeof mobileTab)}
+                  className={`w-full min-h-[44px] py-2.5 px-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer relative ${
+                    isPulsing
+                      ? "ring-2 ring-primary bg-primary/25 text-primary scale-105 animate-pulse"
+                      : mobileTab === tab.id
+                      ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/30"
+                      : "text-on-surface-variant hover:text-on-surface"
+                  }`}
+                >
+                  <tab.icon className={`w-4 h-4 shrink-0 ${isPulsing ? "text-primary animate-bounce" : ""}`} />
+                  <span className="truncate">{tab.label}</span>
+                  <span
+                    className={`px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-extrabold shrink-0 transition-all ${
+                      isPulsing
+                        ? "bg-primary text-on-primary scale-110"
+                        : "bg-surface-container text-on-surface"
+                    }`}
+                  >
+                    {tab.count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           {/* DndContext com 4 Colunas do Kanban */}
@@ -917,6 +1041,7 @@ export default function KdsPage() {
                       order={order}
                       onUpdateStatus={handleUpdateStatus}
                       isUpdating={updatingId === order.id}
+                      isHighlighted={highlightedOrderId === order.id}
                     />
                   ))}
                 </DroppableColumn>
@@ -939,6 +1064,7 @@ export default function KdsPage() {
                       order={order}
                       onUpdateStatus={handleUpdateStatus}
                       isUpdating={updatingId === order.id}
+                      isHighlighted={highlightedOrderId === order.id}
                     />
                   ))}
                 </DroppableColumn>
@@ -961,6 +1087,7 @@ export default function KdsPage() {
                       order={order}
                       onUpdateStatus={handleUpdateStatus}
                       isUpdating={updatingId === order.id}
+                      isHighlighted={highlightedOrderId === order.id}
                     />
                   ))}
                 </DroppableColumn>
@@ -983,6 +1110,7 @@ export default function KdsPage() {
                       order={order}
                       onUpdateStatus={handleUpdateStatus}
                       isUpdating={updatingId === order.id}
+                      isHighlighted={highlightedOrderId === order.id}
                     />
                   ))}
                 </DroppableColumn>
@@ -1042,7 +1170,12 @@ export default function KdsPage() {
                 {colEntregues.map((order) => (
                   <div
                     key={order.id}
-                    className="p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/30 flex items-center justify-between gap-3 shadow-xs"
+                    id={`order-card-${order.id}`}
+                    className={`p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/30 flex items-center justify-between gap-3 shadow-xs transition-all ${
+                      highlightedOrderId === order.id
+                        ? "ring-2 ring-primary bg-primary/10 animate-pulse"
+                        : ""
+                    }`}
                   >
                     <div>
                       <div className="flex items-center gap-2">
@@ -1077,6 +1210,57 @@ export default function KdsPage() {
               </div>
             )}
           </div>
+
+          {/* Toast de Feedback de Movimentação no Celular / Tablet (xl:hidden) */}
+          {mobileToast && (
+            <div className="fixed bottom-4 left-3 right-3 sm:left-auto sm:right-6 sm:w-96 z-50 xl:hidden animate-fade-in shadow-2xl">
+              <div className="bg-surface-container-highest/95 backdrop-blur-md text-on-surface border-2 border-primary/40 rounded-2xl p-3.5 shadow-xl flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                    {mobileToast.isDelivered ? (
+                      <CheckCheck className="w-5 h-5 text-secondary" />
+                    ) : (
+                      <ArrowRight className="w-5 h-5 text-primary" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-sm font-bold text-on-surface truncate">
+                      {mobileToast.isDelivered
+                        ? `Pedido #${mobileToast.orderNumber} entregue (+${mobileToast.points} pts ao cliente)`
+                        : `Pedido #${mobileToast.orderNumber} → ${mobileToast.targetStatusLabel}`}
+                    </p>
+                    {!mobileToast.isDelivered && (
+                      <p className="text-[11px] text-on-surface-variant">
+                        Movido na fila de produção
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {!mobileToast.isDelivered && (
+                    <button
+                      type="button"
+                      onClick={() => handleViewMovedOrder(mobileToast)}
+                      className="px-3.5 py-1.5 min-h-[40px] bg-primary hover:bg-primary-container text-on-primary rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm active:scale-95 transition-all cursor-pointer"
+                    >
+                      <span>Ver</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setMobileToast(null)}
+                    className="p-1.5 min-h-[40px] min-w-[40px] text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg flex items-center justify-center cursor-pointer"
+                    aria-label="Fechar aviso"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>

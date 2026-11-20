@@ -86,8 +86,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="w-full min-h-screen flex items-center justify-center p-margin-lg bg-background font-body-md text-on-surface">
-      <div className="flex flex-col w-full items-center justify-center py-gutter-lg px-margin">
+    <main className="w-full min-h-screen flex items-center justify-center p-3 sm:p-6 md:p-margin-lg bg-background font-body-md text-on-surface overflow-x-hidden">
+      <div className="flex flex-col w-full items-center justify-center py-4 sm:py-gutter-lg px-0 sm:px-margin">
         <div className="w-full max-w-5xl flex flex-col items-center">
           {/* Top Decorative Banner / Trust Bar */}
           <div className="w-full flex items-center justify-between mb-space-lg px-space-md opacity-90 hidden md:flex">

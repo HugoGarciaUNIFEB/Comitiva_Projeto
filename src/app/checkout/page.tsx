@@ -32,6 +32,7 @@ import {
   Award,
   UtensilsCrossed,
   AlertCircle,
+  X,
 } from "lucide-react";
 
 interface SavedAddress {
@@ -243,8 +244,8 @@ export default function CheckoutPage() {
     <div className="min-h-screen flex flex-col bg-background font-body-md text-on-surface">
       <Header />
 
-      <main className="w-full pt-28 flex-1">
-        {/* Top Tracking Progress Bar (Stitch Tela 5) */}
+      <main className="w-full pt-24 sm:pt-28 pb-28 lg:pb-16 flex-1 overflow-x-hidden">
+        {/* Barra de Progresso do Pedido */}
         <section className="w-full bg-surface-container-low py-space-md mb-space-lg shadow-sm border-b border-outline-variant/20">
           <div className="max-w-7xl mx-auto px-margin-lg">
             <div className="flex items-center justify-between gap-space-md">
@@ -571,35 +572,42 @@ export default function CheckoutPage() {
                   {/* PIX */}
                   <label
                     onClick={() => setPaymentMethod("PIX")}
-                    className={`relative flex items-center justify-between p-space-md rounded-xl cursor-pointer transition-all border ${
+                    className={`relative flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-space-md rounded-xl cursor-pointer transition-all border gap-2.5 sm:gap-space-sm ${
                       paymentMethod === "PIX"
                         ? "bg-surface-container border-primary shadow-sm"
                         : "bg-surface-container-low border-transparent hover:bg-surface-container"
                     }`}
                   >
-                    <div className="flex items-center gap-space-sm">
+                    <div className="flex items-start gap-space-sm flex-1 min-w-0">
                       <input
                         type="radio"
                         name="payment_method"
                         checked={paymentMethod === "PIX"}
                         onChange={() => setPaymentMethod("PIX")}
-                        className="w-4 h-4 text-primary focus:ring-0"
+                        className="w-4 h-4 text-primary focus:ring-0 mt-1 shrink-0 cursor-pointer"
                       />
-                      <div className="flex items-center gap-space-xs">
-                        <div className="w-8 h-8 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center shadow-xs">
+                      <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center shadow-xs shrink-0 mt-0.5">
                           <ArrowRightLeft className="w-4 h-4" />
                         </div>
-                        <div>
-                          <span className="font-label-lg text-label-lg text-on-surface block font-bold">
+                        <div className="flex-1 min-w-0">
+                          <span className="font-label-lg text-label-lg text-on-surface block font-bold leading-snug">
                             PIX Instantâneo com Baixa Automática
                           </span>
-                          <span className="font-body-sm text-body-sm text-on-surface-variant">
+                          <span className="font-body-sm text-body-sm text-on-surface-variant block mt-0.5 leading-snug">
                             Confirmação em tempo real com QR Code e Copia e Cola
                           </span>
+                          {/* Selo no mobile (abaixo do título, ocupando a linha inteira) */}
+                          <div className="mt-1.5 sm:hidden">
+                            <span className="bg-tertiary text-on-tertiary px-2.5 py-0.5 rounded-full font-label-sm font-bold uppercase tracking-wider text-[11px] inline-block">
+                              Recomendado
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <span className="bg-tertiary text-on-tertiary px-2.5 py-1 rounded-full font-label-sm font-bold uppercase tracking-wider text-xs">
+                    {/* Selo no desktop (ao lado) */}
+                    <span className="hidden sm:inline-block bg-tertiary text-on-tertiary px-2.5 py-1 rounded-full font-label-sm font-bold uppercase tracking-wider text-xs shrink-0 ml-2">
                       Recomendado
                     </span>
                   </label>
@@ -607,35 +615,42 @@ export default function CheckoutPage() {
                   {/* CARTÃO */}
                   <label
                     onClick={() => setPaymentMethod("CARD")}
-                    className={`relative flex items-center justify-between p-space-md rounded-xl cursor-pointer transition-all border ${
+                    className={`relative flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-space-md rounded-xl cursor-pointer transition-all border gap-2.5 sm:gap-space-sm ${
                       paymentMethod === "CARD"
                         ? "bg-surface-container border-primary shadow-sm"
                         : "bg-surface-container-low border-transparent hover:bg-surface-container"
                     }`}
                   >
-                    <div className="flex items-center gap-space-sm">
+                    <div className="flex items-start gap-space-sm flex-1 min-w-0">
                       <input
                         type="radio"
                         name="payment_method"
                         checked={paymentMethod === "CARD"}
                         onChange={() => setPaymentMethod("CARD")}
-                        className="w-4 h-4 text-primary focus:ring-0"
+                        className="w-4 h-4 text-primary focus:ring-0 mt-1 shrink-0 cursor-pointer"
                       />
-                      <div className="flex items-center gap-space-xs">
-                        <div className="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center">
+                      <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center shrink-0 mt-0.5">
                           <CreditCard className="w-4 h-4" />
                         </div>
-                        <div>
-                          <span className="font-label-lg text-label-lg text-on-surface block font-semibold">
+                        <div className="flex-1 min-w-0">
+                          <span className="font-label-lg text-label-lg text-on-surface block font-bold leading-snug">
                             Cartão de Crédito ou Débito na Entrega
                           </span>
-                          <span className="font-body-sm text-body-sm text-on-surface-variant">
+                          <span className="font-body-sm text-body-sm text-on-surface-variant block mt-0.5 leading-snug">
                             Levamos a maquininha sem fio até o seu portão
                           </span>
+                          {/* Selo no mobile (abaixo do título, ocupando a linha inteira) */}
+                          <div className="mt-1.5 sm:hidden">
+                            <span className="font-label-sm text-on-surface-variant text-xs font-semibold block">
+                              Visa • Master • Elo
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <span className="font-label-sm text-on-surface-variant text-xs">
+                    {/* Selo no desktop (ao lado) */}
+                    <span className="hidden sm:inline-block font-label-sm text-on-surface-variant text-xs shrink-0 ml-2">
                       Visa • Master • Elo
                     </span>
                   </label>
@@ -643,35 +658,42 @@ export default function CheckoutPage() {
                   {/* DINHEIRO */}
                   <label
                     onClick={() => setPaymentMethod("CASH")}
-                    className={`relative flex items-center justify-between p-space-md rounded-xl cursor-pointer transition-all border ${
+                    className={`relative flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-space-md rounded-xl cursor-pointer transition-all border gap-2.5 sm:gap-space-sm ${
                       paymentMethod === "CASH"
                         ? "bg-surface-container border-primary shadow-sm"
                         : "bg-surface-container-low border-transparent hover:bg-surface-container"
                     }`}
                   >
-                    <div className="flex items-center gap-space-sm">
+                    <div className="flex items-start gap-space-sm flex-1 min-w-0">
                       <input
                         type="radio"
                         name="payment_method"
                         checked={paymentMethod === "CASH"}
                         onChange={() => setPaymentMethod("CASH")}
-                        className="w-4 h-4 text-primary focus:ring-0"
+                        className="w-4 h-4 text-primary focus:ring-0 mt-1 shrink-0 cursor-pointer"
                       />
-                      <div className="flex items-center gap-space-xs">
-                        <div className="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center">
+                      <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center shrink-0 mt-0.5">
                           <Banknote className="w-4 h-4" />
                         </div>
-                        <div>
-                          <span className="font-label-lg text-label-lg text-on-surface block font-semibold">
+                        <div className="flex-1 min-w-0">
+                          <span className="font-label-lg text-label-lg text-on-surface block font-bold leading-snug">
                             Dinheiro Físico
                           </span>
-                          <span className="font-body-sm text-body-sm text-on-surface-variant">
+                          <span className="font-body-sm text-body-sm text-on-surface-variant block mt-0.5 leading-snug">
                             Pagamento em cédulas no ato do recebimento
                           </span>
+                          {/* Selo no mobile (abaixo do título, ocupando a linha inteira) */}
+                          <div className="mt-1.5 sm:hidden">
+                            <span className="font-label-sm text-on-surface-variant text-xs font-semibold block">
+                              Com Troco
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <span className="font-label-sm text-on-surface-variant text-xs">
+                    {/* Selo no desktop (ao lado) */}
+                    <span className="hidden sm:inline-block font-label-sm text-on-surface-variant text-xs shrink-0 ml-2">
                       Com Troco
                     </span>
                   </label>
@@ -757,12 +779,12 @@ export default function CheckoutPage() {
                             <CheckCircle2 className="w-4 h-4" />
                             <span>
                               {isPixSimulatedPaid
-                                ? "Pagamento PIX Simulado com Sucesso!"
-                                : "Simular Pagamento PIX (Ambiente de Teste)"}
+                                ? "Pagamento PIX Confirmado!"
+                                : "Confirmar Pagamento PIX"}
                             </span>
                           </button>
                           <p className="text-[10px] text-on-surface-variant mt-1 text-center">
-                            * Simulação acadêmica sem cobrança real.
+                            * Após pagar via chave aleatória ou QR Code acima, confirme aqui.
                           </p>
                         </div>
                       </div>
@@ -859,23 +881,22 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-1">
-                            <h3 className="font-label-lg font-bold text-on-surface truncate text-sm">
+                          <div className="flex items-start justify-between gap-2">
+                            <h3 className="font-label-lg font-bold text-on-surface text-sm leading-snug line-clamp-2 break-words flex-1 min-w-0">
                               {item.quantity}x {item.name}
                             </h3>
-                            <span className="font-label-lg font-bold text-on-surface text-sm">
-                              R${" "}
-                              {(item.unitPrice * item.quantity).toFixed(2).replace(".", ",")}
+                            <span className="font-label-lg font-bold text-on-surface text-sm whitespace-nowrap shrink-0 text-right">
+                              R$ {(item.unitPrice * item.quantity).toFixed(2).replace(".", ",")}
                             </span>
                           </div>
-                          <div className="flex items-center gap-1.5 mt-0.5">
+                          <div className="flex flex-wrap items-center gap-1.5 mt-1">
                             {item.size !== "UNICO" && (
-                              <span className="bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-1.5 py-0.2 rounded">
+                              <span className="bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 inline-block">
                                 Tam {item.size} • {item.weight}
                               </span>
                             )}
                             {item.includedSides && item.includedSides.length > 0 && (
-                              <span className="font-body-sm text-[11px] text-on-surface-variant truncate">
+                              <span className="font-body-sm text-[11px] text-on-surface-variant line-clamp-1 break-words">
                                 {item.includedSides.join(", ")}
                               </span>
                             )}
@@ -991,12 +1012,12 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  {/* Botão Finalizar */}
+                  {/* Botão Finalizar Desktop */}
                   <button
                     type="button"
                     onClick={handleFinalizeOrder}
                     disabled={loading || items.length === 0 || isChangeInvalid}
-                    className="w-full h-14 bg-primary hover:bg-primary-container text-on-primary font-label-lg rounded-xl shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95 font-bold text-base disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+                    className="hidden lg:flex w-full h-14 bg-primary hover:bg-primary-container text-on-primary font-label-lg rounded-xl shadow-lg items-center justify-center gap-2 transition-transform active:scale-95 font-bold text-base disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                   >
                     <CheckCircle2 className="w-5 h-5" />
                     <span>
@@ -1014,10 +1035,45 @@ export default function CheckoutPage() {
         </div>
       </main>
 
-      {/* Modal de Sucesso do Pedido (Stitch Tela 5) */}
+      {/* Botão Confirmar Fixo no Rodapé no Celular (≤1023px) */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md border-t border-outline-variant/30 p-3 shadow-2xl lg:hidden">
+        <div className="max-w-md mx-auto flex items-center justify-between gap-3">
+          <div className="flex flex-col">
+            <span className="text-xs text-on-surface-variant font-medium">Total</span>
+            <span className="text-lg font-bold text-primary font-serif leading-tight">
+              R$ {getTotal().toFixed(2).replace(".", ",")}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handleFinalizeOrder}
+            disabled={loading || items.length === 0 || isChangeInvalid}
+            className="flex-1 max-w-[240px] h-12 min-h-[48px] bg-primary hover:bg-primary-container text-on-primary rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
+          >
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span className="truncate">
+              {loading
+                ? "Enviando..."
+                : isChangeInvalid
+                ? "Troco inválido"
+                : "Confirmar Pedido"}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Modal de Sucesso do Pedido - Tela Cheia no Celular */}
       {createdOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-secondary/70 backdrop-blur-sm animate-fade-in">
-          <div className="max-w-md w-full bg-surface-container-lowest rounded-2xl shadow-2xl p-6 sm:p-8 text-center border border-outline-variant/30 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-secondary/70 backdrop-blur-sm animate-fade-in">
+          <div className="w-full h-full sm:h-auto sm:max-w-md bg-surface-container-lowest sm:rounded-2xl shadow-2xl p-6 sm:p-8 text-center border-0 sm:border border-outline-variant/30 space-y-4 flex flex-col justify-center overflow-y-auto relative">
+            <button
+              type="button"
+              onClick={() => setCreatedOrder(null)}
+              className="absolute top-4 right-4 p-2 min-h-[44px] min-w-[44px] rounded-full text-on-surface hover:bg-surface-container flex items-center justify-center cursor-pointer"
+              aria-label="Fechar"
+            >
+              <X className="w-5 h-5" />
+            </button>
             <div className="w-16 h-16 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center shadow-xs">
               <CookingPot className="w-9 h-9" />
             </div>
@@ -1037,7 +1093,7 @@ export default function CheckoutPage() {
             <div className="p-3 bg-surface-container-low rounded-xl text-left text-xs space-y-1 border border-outline-variant/20">
               <p className="flex justify-between">
                 <span className="text-on-surface-variant">Status:</span>
-                <span className="font-bold text-primary">AGUARDANDO NO KDS</span>
+                <span className="font-bold text-primary">Aguardando preparo</span>
               </p>
               <p className="flex justify-between">
                 <span className="text-on-surface-variant">Tempo estimado:</span>
@@ -1051,7 +1107,7 @@ export default function CheckoutPage() {
                 className="w-full h-12 bg-primary hover:bg-primary-container text-on-primary rounded-lg font-bold flex items-center justify-center gap-2 shadow-md transition-all"
               >
                 <Clock className="w-5 h-5" />
-                <span>Acompanhar em Tempo Real (Tela 11)</span>
+                <span>Acompanhar em Tempo Real</span>
               </Link>
 
               <Link

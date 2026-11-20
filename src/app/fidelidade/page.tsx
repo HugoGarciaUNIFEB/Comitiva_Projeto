@@ -24,6 +24,7 @@ import {
   Lock,
   ArrowRight,
   PartyPopper,
+  X,
 } from "lucide-react";
 
 interface LoyaltyTransaction {
@@ -153,9 +154,9 @@ export default function FidelidadePage() {
       <Header />
       <CartDrawer />
 
-      <main className="w-full pt-28 bg-background flex-1">
+      <main className="w-full pt-24 sm:pt-28 pb-16 bg-background flex-1 overflow-x-hidden">
         <div className="flex flex-col w-full">
-          <div className="max-w-7xl mx-auto w-full px-margin-lg py-space-xl space-y-space-xl">
+          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-10 space-y-8">
             {/* Top Introductory Banner */}
             <div className="relative overflow-hidden rounded-2xl bg-surface-container-low p-space-lg shadow-sm border border-outline-variant/30">
               <div className="absolute -right-12 -bottom-12 w-64 h-64 rounded-full bg-primary/5 pointer-events-none" />
@@ -189,7 +190,7 @@ export default function FidelidadePage() {
             {/* Layout Grid: Main Loyalty Pass & Side Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-stretch">
               {/* Tropeiro Pass Card (Leather & Wood Aesthetic) */}
-              <div className="lg:col-span-8 relative rounded-3xl overflow-hidden bg-[#4A2E2B] text-surface-bright shadow-xl flex flex-col justify-between p-8 border border-outline/30">
+              <div className="lg:col-span-8 relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#4A2E2B] text-surface-bright shadow-xl flex flex-col justify-between p-4 sm:p-6 md:p-8 border border-outline/30">
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#311c1a] via-[#4A2E2B] to-[#5d3834] opacity-95 pointer-events-none" />
                 <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-primary-container/20 blur-2xl pointer-events-none" />
 
@@ -533,10 +534,18 @@ export default function FidelidadePage() {
         </div>
       </main>
 
-      {/* Success Modal */}
+      {/* Success Modal - Tela Cheia no Celular */}
       {successModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-surface-container-lowest rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-primary/20 text-center animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-0 sm:p-4">
+          <div className="bg-surface-container-lowest h-full sm:h-auto rounded-none sm:rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border-0 sm:border border-primary/20 text-center animate-in fade-in zoom-in-95 duration-200 flex flex-col justify-center overflow-y-auto relative">
+            <button
+              type="button"
+              onClick={() => setSuccessModal(null)}
+              className="absolute top-4 right-4 p-2 min-h-[44px] min-w-[44px] rounded-full text-on-surface hover:bg-surface-container flex items-center justify-center cursor-pointer"
+              aria-label="Fechar"
+            >
+              <X className="w-5 h-5" />
+            </button>
             <PartyPopper className="w-14 h-14 text-primary mx-auto mb-2" />
             <h3 className="font-headline-md text-headline-md text-on-surface">
               Parabéns pelo Resgate!

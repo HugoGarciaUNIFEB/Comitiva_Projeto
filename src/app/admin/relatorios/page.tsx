@@ -99,9 +99,9 @@ export default function AdminRelatoriosPage() {
     <div className="flex min-h-screen bg-surface">
       <AdminSidebar />
 
-      <div className="pl-72 flex flex-col flex-1 min-w-0">
+      <div className="pt-16 lg:pt-0 lg:pl-72 flex flex-col flex-1 min-w-0 max-w-full overflow-x-hidden">
         {/* Top Header */}
-        <header className="h-16 px-gutter-lg flex items-center justify-between bg-surface-container-lowest/90 backdrop-blur-xl border-b border-surface-container shadow-sm sticky top-0 z-30">
+        <header className="h-16 px-4 sm:px-gutter-lg flex items-center justify-between bg-surface-container-lowest/90 backdrop-blur-xl border-b border-surface-container shadow-sm sticky top-0 z-30">
           <div className="flex items-center gap-space-lg">
             <div className="flex items-center gap-space-xs text-on-surface-variant">
               <BarChart3 className="w-5 h-5 text-primary" />
@@ -121,9 +121,9 @@ export default function AdminRelatoriosPage() {
         </header>
 
         <main className="w-full pt-4 bg-surface pb-16">
-          <div className="p-gutter-lg max-w-[1500px] w-full flex flex-col gap-space-lg">
+          <div className="p-4 sm:p-gutter-lg max-w-[1500px] w-full flex flex-col gap-space-lg">
             {/* Top Bar: Title & Primary Controls */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-low p-space-lg rounded-xl shadow-sm border border-surface-container">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-low p-4 sm:p-space-lg rounded-xl shadow-sm border border-surface-container">
               <div className="flex flex-col">
                 <div className="flex items-center gap-space-xs text-primary font-bold">
                   <BarChart3 className="w-5 h-5 text-primary" />
@@ -141,11 +141,11 @@ export default function AdminRelatoriosPage() {
 
               {/* Controls & Filter Pill Group */}
               <div className="flex flex-wrap items-center gap-space-sm">
-                <div className="flex items-center bg-surface-container-highest p-1 rounded-lg">
+                <div className="flex items-center bg-surface-container-highest p-1 rounded-xl overflow-x-auto max-w-full">
                   <button
                     type="button"
                     onClick={() => setPeriod("today")}
-                    className={`px-space-md py-1.5 rounded font-label-md text-label-md transition-all ${
+                    className={`min-h-[40px] px-3 sm:px-space-md py-2 rounded-lg font-label-md text-xs sm:text-label-md transition-all whitespace-nowrap cursor-pointer ${
                       period === "today"
                         ? "bg-primary text-on-primary font-bold shadow-sm"
                         : "text-on-surface-variant hover:text-on-surface"
@@ -156,7 +156,7 @@ export default function AdminRelatoriosPage() {
                   <button
                     type="button"
                     onClick={() => setPeriod("yesterday")}
-                    className={`px-space-md py-1.5 rounded font-label-md text-label-md transition-all ${
+                    className={`min-h-[40px] px-3 sm:px-space-md py-2 rounded-lg font-label-md text-xs sm:text-label-md transition-all whitespace-nowrap cursor-pointer ${
                       period === "yesterday"
                         ? "bg-primary text-on-primary font-bold shadow-sm"
                         : "text-on-surface-variant hover:text-on-surface"
@@ -167,7 +167,7 @@ export default function AdminRelatoriosPage() {
                   <button
                     type="button"
                     onClick={() => setPeriod("7days")}
-                    className={`px-space-md py-1.5 rounded font-label-md text-label-md transition-all ${
+                    className={`min-h-[40px] px-3 sm:px-space-md py-2 rounded-lg font-label-md text-xs sm:text-label-md transition-all whitespace-nowrap cursor-pointer ${
                       period === "7days"
                         ? "bg-primary text-on-primary font-bold shadow-sm"
                         : "text-on-surface-variant hover:text-on-surface"
@@ -178,7 +178,7 @@ export default function AdminRelatoriosPage() {
                   <button
                     type="button"
                     onClick={() => setPeriod("month")}
-                    className={`px-space-md py-1.5 rounded font-label-md text-label-md transition-all ${
+                    className={`min-h-[40px] px-3 sm:px-space-md py-2 rounded-lg font-label-md text-xs sm:text-label-md transition-all whitespace-nowrap cursor-pointer ${
                       period === "month"
                         ? "bg-primary text-on-primary font-bold shadow-sm"
                         : "text-on-surface-variant hover:text-on-surface"
@@ -192,7 +192,7 @@ export default function AdminRelatoriosPage() {
                   <button
                     type="button"
                     onClick={() => fetchReports()}
-                    className="flex items-center gap-space-xs px-space-md py-2.5 bg-surface-container-highest hover:bg-surface-variant text-on-surface rounded-lg font-label-md text-label-md transition-all font-semibold cursor-pointer"
+                    className="min-h-[40px] flex items-center gap-space-xs px-3 sm:px-space-md py-2 bg-surface-container-highest hover:bg-surface-variant text-on-surface rounded-xl font-label-md text-xs sm:text-label-md transition-all font-semibold cursor-pointer"
                   >
                     <RefreshCw className={`w-4 h-4 text-primary ${refreshing ? "animate-spin" : ""}`} />
                     <span>Atualizar</span>
@@ -359,7 +359,7 @@ export default function AdminRelatoriosPage() {
                     </div>
 
                     {/* Gráfico Recharts Interativo */}
-                    <div className="w-full h-72 pt-4">
+                    <div className="w-full h-64 sm:h-72 pt-4">
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={data.hourlyChart} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                           <defs>
@@ -369,8 +369,8 @@ export default function AdminRelatoriosPage() {
                             </linearGradient>
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e2dc" />
-                          <XAxis dataKey="hour" stroke="#8d7168" fontSize={12} tickLine={false} />
-                          <YAxis stroke="#8d7168" fontSize={12} tickLine={false} />
+                          <XAxis dataKey="hour" stroke="#8d7168" fontSize={11} tickLine={false} interval="preserveStartEnd" />
+                          <YAxis stroke="#8d7168" fontSize={11} tickLine={false} />
                           <Tooltip
                             contentStyle={{
                               backgroundColor: "#31312d",
@@ -488,11 +488,11 @@ export default function AdminRelatoriosPage() {
                         data.topDishes.map((dish, idx) => (
                           <div
                             key={dish.name}
-                            className="p-space-md bg-surface-container-low rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md hover:bg-surface-container transition-colors border border-surface-container"
+                            className="p-3.5 sm:p-space-md bg-surface-container-low rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-space-md hover:bg-surface-container transition-colors border border-surface-container min-w-0 overflow-hidden"
                           >
-                            <div className="flex items-center gap-space-md min-w-0">
+                            <div className="flex items-center gap-3 sm:gap-space-md flex-1 min-w-0 w-full sm:w-auto">
                               <div
-                                className={`w-12 h-12 rounded-lg flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm shrink-0 ${
+                                className={`w-11 h-11 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm shrink-0 ${
                                   idx === 0
                                     ? "bg-primary text-on-primary"
                                     : idx === 1
@@ -502,35 +502,35 @@ export default function AdminRelatoriosPage() {
                               >
                                 {idx + 1}º
                               </div>
-                              <div className="min-w-0 flex flex-col">
-                                <div className="flex items-center gap-space-xs">
-                                  <h4 className="font-title-md text-title-md text-on-surface font-bold truncate">
+                              <div className="flex-1 min-w-0 flex flex-col">
+                                <div className="flex items-center gap-space-xs flex-wrap">
+                                  <h4 className="font-title-md text-title-md text-on-surface font-bold line-clamp-2 break-words leading-snug">
                                     {dish.name}
                                   </h4>
                                   {idx === 0 && (
-                                    <span className="bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">
+                                    <span className="bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-1.5 py-0.5 rounded uppercase whitespace-nowrap shrink-0">
                                       Carro Chefe
                                     </span>
                                   )}
                                 </div>
                                 <span className="font-body-sm text-body-sm text-on-surface-variant">
-                                  {dish.quantity} unidades vendidas • {dish.pct}% do total
+                                  {dish.quantity} {dish.quantity === 1 ? "unidade vendida" : "unidades vendidas"} • {dish.pct}% do total
                                 </span>
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-space-lg w-full md:w-auto justify-between md:justify-end">
-                              <div className="w-32 hidden sm:block">
+                            <div className="flex items-center gap-space-lg w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 border-surface-container/60 pt-2 sm:pt-0 shrink-0">
+                              <div className="w-24 sm:w-32 hidden xs:block">
                                 <div className="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
                                   <div className="bg-primary h-full rounded-full" style={{ width: `${dish.pct}%` }}></div>
                                 </div>
                               </div>
-                              <div className="text-right">
+                              <div className="text-right whitespace-nowrap shrink-0">
                                 <div className="font-title-md text-title-md font-bold text-on-surface">
                                   R$ {dish.revenue.toFixed(2).replace(".", ",")}
                                 </div>
-                                <span className="font-label-sm text-label-sm text-on-surface-variant">
-                                  Preço Médio: R$ {(dish.revenue / Math.max(1, dish.quantity)).toFixed(2).replace(".", ",")}
+                                <span className="font-label-sm text-[11px] sm:text-label-sm text-on-surface-variant">
+                                  Médio: R$ {(dish.revenue / Math.max(1, dish.quantity)).toFixed(2).replace(".", ",")}
                                 </span>
                               </div>
                             </div>

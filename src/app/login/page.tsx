@@ -32,7 +32,6 @@ export default function LoginPage() {
   const [whatsapp, setWhatsapp] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [authMode, setAuthMode] = useState<"code" | "password">("password");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -57,6 +56,12 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
+
+    if (!password.trim()) {
+      setErrorMessage("Por favor, digite sua senha de acesso.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -65,7 +70,7 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           whatsapp,
-          password: password || "cliente_comitiva", // Fallback caso modo código
+          password,
         }),
       });
 
@@ -86,22 +91,21 @@ export default function LoginPage() {
     }
   };
 
-  // Preenchimento rápido para demonstração da banca
-  const fillCredentials = (type: "admin" | "cliente") => {
+  // Preenchimento de teste apenas em ambiente de desenvolvimento local
+  const fillDevCredentials = (type: "admin" | "cliente") => {
+    if (process.env.NODE_ENV !== "development") return;
     if (type === "admin") {
       setWhatsapp("(17) 99999-0000");
       setPassword("admin_comitiva");
-      setAuthMode("password");
     } else {
       setWhatsapp("(17) 99812-4421");
       setPassword("cliente_comitiva");
-      setAuthMode("password");
     }
   };
 
   return (
-    <main className="w-full min-h-screen flex items-center justify-center p-margin-lg bg-background font-body-md text-on-surface">
-      <div className="flex flex-col w-full items-center justify-center py-gutter-lg px-margin">
+    <main className="w-full min-h-screen flex items-center justify-center p-3 sm:p-6 md:p-margin-lg bg-background font-body-md text-on-surface overflow-x-hidden">
+      <div className="flex flex-col w-full items-center justify-center py-4 sm:py-gutter-lg px-0 sm:px-margin">
         <div className="w-full max-w-5xl flex flex-col items-center">
           {/* Top Decorative Banner / Trust Bar */}
           <div className="w-full flex items-center justify-between mb-space-lg px-space-md opacity-90 hidden md:flex">
@@ -218,7 +222,7 @@ export default function LoginPage() {
                   <span className="font-headline-sm text-headline-sm text-primary uppercase tracking-wide">
                     Comitiva Fogo de Chão
                   </span>
-                  <h1 className="font-headline-md text-headline-md text-on-surface mt-1">
+                  <h1 className="font-headline-md text-headline-md text-on-surface mt-1 font-bold">
                     Bem-vindo à Comitiva!
                   </h1>
                   <p className="font-body-md text-body-md text-on-surface-variant mt-space-xs max-w-md">
@@ -226,61 +230,35 @@ export default function LoginPage() {
                   </p>
                 </div>
 
-                {/* Atalho para Testes da Banca */}
-                <div className="mt-4 p-2.5 bg-surface-container rounded-lg border border-outline-variant/30 text-xs flex flex-wrap items-center justify-between gap-2">
-                  <span className="font-semibold text-on-surface-variant">
-                    Atalho para teste:
-                  </span>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => fillCredentials("cliente")}
-                      className="px-2 py-1 bg-surface-container-highest hover:bg-surface-container-low rounded text-primary font-bold transition-colors"
-                    >
-                      Cliente Teste
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => fillCredentials("admin")}
-                      className="px-2 py-1 bg-surface-container-highest hover:bg-surface-container-low rounded text-secondary font-bold transition-colors"
-                    >
-                      Admin Teste
-                    </button>
+                {/* Atalho para Desenvolvimento Local (Visível APENAS em modo development) */}
+                {process.env.NODE_ENV === "development" && (
+                  <div className="mt-4 p-2.5 bg-surface-container rounded-lg border border-outline-variant/30 text-xs flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-semibold text-on-surface-variant">
+                      Atalho (Ambiente Dev):
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => fillDevCredentials("cliente")}
+                        className="px-2 py-1 bg-surface-container-highest hover:bg-surface-container-low rounded text-primary font-bold transition-colors cursor-pointer"
+                      >
+                        Cliente Teste
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => fillDevCredentials("admin")}
+                        className="px-2 py-1 bg-surface-container-highest hover:bg-surface-container-low rounded text-secondary font-bold transition-colors cursor-pointer"
+                      >
+                        Admin Teste
+                      </button>
+                    </div>
                   </div>
-                </div>
-
-                {/* Auth Mode Segmented Tabs */}
-                <div className="mt-space-md w-full bg-surface-container-low p-1 rounded-lg flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode("password")}
-                    className={`flex-1 py-2 rounded-md font-label-md text-label-md transition-all duration-200 text-center flex items-center justify-center gap-1 ${
-                      authMode === "password"
-                        ? "text-on-primary bg-primary shadow-sm font-bold"
-                        : "text-on-surface-variant hover:text-on-surface bg-transparent"
-                    }`}
-                  >
-                    <Lock className="w-4 h-4" />
-                    Senha Cadastrada
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode("code")}
-                    className={`flex-1 py-2 rounded-md font-label-md text-label-md transition-all duration-200 text-center flex items-center justify-center gap-1 ${
-                      authMode === "code"
-                        ? "text-on-primary bg-primary shadow-sm font-bold"
-                        : "text-on-surface-variant hover:text-on-surface bg-transparent"
-                    }`}
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    Código WhatsApp
-                  </button>
-                </div>
+                )}
 
                 {/* Mensagem de Erro */}
                 {errorMessage && (
                   <div className="mt-space-sm p-space-sm bg-error-container text-on-error-container rounded-lg text-sm flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-error" />
+                    <AlertCircle className="w-4 h-4 text-error shrink-0" />
                     <span>{errorMessage}</span>
                   </div>
                 )}
@@ -314,50 +292,47 @@ export default function LoginPage() {
                       </div>
                     </div>
                     <span className="font-body-sm text-body-sm text-on-surface-variant">
-                      {authMode === "code"
-                        ? "Simulação de código direto no WhatsApp (use o botão de entrar)."
-                        : "Digite o WhatsApp cadastrado com seu DDD."}
+                      Digite o WhatsApp cadastrado com seu DDD.
                     </span>
                   </div>
 
                   {/* Senha Input */}
-                  {authMode === "password" && (
-                    <div className="flex flex-col gap-1">
-                      <div className="flex justify-between items-center">
-                        <label
-                          htmlFor="password-input"
-                          className="font-label-md text-label-md text-on-surface font-semibold"
-                        >
-                          Sua Senha de Acesso
-                        </label>
-                      </div>
-                      <div className="relative flex items-center">
-                        <div className="absolute left-3 flex items-center pointer-events-none text-outline">
-                          <Key className="w-4 h-4" />
-                        </div>
-                        <input
-                          id="password-input"
-                          type={showPassword ? "text" : "password"}
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          placeholder="••••••••"
-                          required
-                          className="w-full h-12 pl-10 pr-10 bg-surface rounded-lg font-body-lg text-body-lg text-on-surface border border-outline-variant/40 focus:border-primary focus:bg-surface-container-lowest outline-none transition-all"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 flex items-center text-on-surface-variant hover:text-on-surface"
-                        >
-                          {showPassword ? (
-                            <EyeOff className="w-4 h-4" />
-                          ) : (
-                            <Eye className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex justify-between items-center">
+                      <label
+                        htmlFor="password-input"
+                        className="font-label-md text-label-md text-on-surface font-semibold"
+                      >
+                        Sua Senha de Acesso
+                      </label>
                     </div>
-                  )}
+                    <div className="relative flex items-center">
+                      <div className="absolute left-3 flex items-center pointer-events-none text-outline">
+                        <Key className="w-4 h-4" />
+                      </div>
+                      <input
+                        id="password-input"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        required
+                        className="w-full h-12 pl-10 pr-10 bg-surface rounded-lg font-body-lg text-body-lg text-on-surface border border-outline-variant/40 focus:border-primary focus:bg-surface-container-lowest outline-none transition-all"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 flex items-center text-on-surface-variant hover:text-on-surface cursor-pointer"
+                        aria-label={showPassword ? "Ocultar senha" : "Ver senha"}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
 
                   {/* Main Primary Submit Button */}
                   <button
@@ -367,25 +342,6 @@ export default function LoginPage() {
                   >
                     <span>{loading ? "Entrando..." : "Entrar e Fazer Pedido"}</span>
                     <ArrowRight className="w-4 h-4" />
-                  </button>
-
-                  {/* Divider */}
-                  <div className="flex items-center my-space-xs">
-                    <div className="flex-grow h-px bg-surface-container-high"></div>
-                    <span className="px-space-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
-                      ou acesse rápido
-                    </span>
-                    <div className="flex-grow h-px bg-surface-container-high"></div>
-                  </div>
-
-                  {/* WhatsApp Instant 1-Click Action */}
-                  <button
-                    type="button"
-                    onClick={() => fillCredentials("cliente")}
-                    className="w-full h-12 bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg rounded-lg transition-all flex items-center justify-center gap-space-sm active:scale-[0.99] cursor-pointer"
-                  >
-                    <MessageSquare className="w-5 h-5 text-primary" />
-                    <span>Preencher como Cliente de Teste</span>
                   </button>
                 </form>
               </div>

@@ -46,7 +46,7 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, StatusConfig> = {
     description: "O entregador já saiu da base com sua marmita quentinha!",
     badgeClass: "bg-secondary-fixed text-on-secondary-fixed font-bold",
     dotColor: "bg-secondary",
-    stepIndex: 2,
+    stepIndex: 3,
   },
   ENTREGUE: {
     label: "Entregue com Sucesso",
@@ -54,7 +54,7 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, StatusConfig> = {
     description: "Pedido entregue! Bom almoço caipira e volte sempre à Comitiva.",
     badgeClass: "bg-surface-container text-on-surface font-semibold",
     dotColor: "bg-primary",
-    stepIndex: 3,
+    stepIndex: 4,
   },
   CANCELADO: {
     label: "Pedido Cancelado",
@@ -66,31 +66,94 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, StatusConfig> = {
   },
 };
 
-export function getOrderStatusConfig(status?: string): StatusConfig {
+export function getOrderStatusConfig(status?: string, isDelivery: boolean = true): StatusConfig {
   if (!status) return ORDER_STATUS_MAP.AGUARDANDO;
   const normalized = status.toUpperCase() as OrderStatus;
-  return (
-    ORDER_STATUS_MAP[normalized] || {
-      label: status,
-      shortLabel: status,
-      description: "",
-      badgeClass: "bg-surface-container text-on-surface",
-      dotColor: "bg-surface-variant",
-      stepIndex: 0,
+  const baseConfig = ORDER_STATUS_MAP[normalized] || {
+    label: status,
+    shortLabel: status,
+    description: "",
+    badgeClass: "bg-surface-container text-on-surface",
+    dotColor: "bg-surface-variant",
+    stepIndex: 0,
+  };
+
+  if (!isDelivery) {
+    if (normalized === "PRONTO") {
+      return {
+        ...baseConfig,
+        label: "Pronto no Balcão",
+        shortLabel: "Pronto",
+        description: "Sua marmita está montada no balcão, quentinha e pronta para retirada!",
+        stepIndex: 2,
+      };
     }
+    if (normalized === "ENTREGUE") {
+      return {
+        ...baseConfig,
+        label: "Retirado no Balcão",
+        shortLabel: "Retirado",
+        description: "Pedido retirado no balcão! Bom almoço caipira e volte sempre à Comitiva.",
+        stepIndex: 3,
+      };
+    }
+  }
+
+  return baseConfig;
+}
+
+export function getOrderStepIndex(status?: string, isDelivery: boolean = true): number {
+  if (!status) return 0;
+  const normalized = status.toUpperCase();
+  if (normalized === "CANCELADO") return -1;
+  if (!isDelivery) {
+    if (normalized === "AGUARDANDO") return 0;
+    if (normalized === "NO_FOGAO") return 1;
+    if (normalized === "PRONTO") return 2;
+    if (normalized === "ENTREGUE") return 3;
+    return 0;
+  }
+  if (normalized === "AGUARDANDO") return 0;
+  if (normalized === "NO_FOGAO") return 1;
+  if (normalized === "PRONTO") return 2;
+  if (normalized === "EM_ROTA") return 3;
+  if (normalized === "ENTREGUE") return 4;
+  return 0;
+}
+
+export function isTodaySaoPaulo(dateInput?: Date | string | null): boolean {
+  if (!dateInput) return false;
+  const d = new Date(dateInput);
+  if (isNaN(d.getTime())) return false;
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const nowParts = formatter.formatToParts(new Date());
+  const dateParts = formatter.formatToParts(d);
+
+  const getVal = (parts: Intl.DateTimeFormatPart[], type: string) =>
+    parts.find((p) => p.type === type)?.value;
+
+  return (
+    getVal(nowParts, "year") === getVal(dateParts, "year") &&
+    getVal(nowParts, "month") === getVal(dateParts, "month") &&
+    getVal(nowParts, "day") === getVal(dateParts, "day")
   );
 }
 
-export function getOrderStatusLabel(status?: string): string {
-  return getOrderStatusConfig(status).label;
+export function getOrderStatusLabel(status?: string, isDelivery: boolean = true): string {
+  return getOrderStatusConfig(status, isDelivery).label;
 }
 
-export function getOrderStatusShortLabel(status?: string): string {
-  return getOrderStatusConfig(status).shortLabel;
+export function getOrderStatusShortLabel(status?: string, isDelivery: boolean = true): string {
+  return getOrderStatusConfig(status, isDelivery).shortLabel;
 }
 
-export function getOrderStatusBadgeClass(status?: string): string {
-  return getOrderStatusConfig(status).badgeClass;
+export function getOrderStatusBadgeClass(status?: string, isDelivery: boolean = true): string {
+  return getOrderStatusConfig(status, isDelivery).badgeClass;
 }
 
 export function formatCurrency(value?: number | null): string {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useCartStore } from "@/lib/store/useCartStore";
 import SafeImage from "@/components/SafeImage";
-import { Flame, Check, ShoppingBag, Plus, CookingPot } from "lucide-react";
+import { Flame, Check, Plus, CookingPot } from "lucide-react";
 
 interface ProductSize {
   id: string;
@@ -92,7 +92,7 @@ export default function DishCard({ dish, onAddedToCart }: DishCardProps) {
 
   return (
     <div
-      className={`dish-card flex flex-col bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden group border border-outline-variant/30 ${
+      className={`dish-card flex flex-col bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden group border border-outline-variant/30 ${
         dish.isPaused ? "opacity-60 grayscale-[40%]" : ""
       }`}
     >
@@ -106,11 +106,11 @@ export default function DishCard({ dish, onAddedToCart }: DishCardProps) {
         />
 
         {dish.isPaused ? (
-          <div className="absolute top-2 right-2 bg-error text-on-error px-2.5 py-1 rounded-full font-label-sm text-label-sm font-bold shadow-sm">
+          <div className="absolute top-2.5 right-2.5 bg-error text-on-error px-2.5 py-1 rounded-full text-xs font-bold shadow-sm">
             Esgotado no Fogão
           </div>
         ) : dish.fireTime ? (
-          <div className="absolute top-2 right-2 bg-secondary text-on-secondary px-2.5 py-1 rounded-full font-label-sm text-label-sm font-bold flex items-center gap-1 shadow-sm">
+          <div className="absolute top-2.5 right-2.5 bg-secondary text-on-secondary px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
             <Flame className="w-3.5 h-3.5 text-tertiary-fixed-dim" />
             <span>{dish.fireTime}</span>
           </div>
@@ -118,60 +118,62 @@ export default function DishCard({ dish, onAddedToCart }: DishCardProps) {
       </div>
 
       {/* Conteúdo do Card */}
-      <div className="p-4 flex-1 flex flex-col justify-between space-y-space-sm">
-        <div>
-          <div className="flex items-center gap-1 text-primary mb-1">
+      <div className="p-4 flex-1 flex flex-col justify-between gap-3">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-1 text-primary">
             <CookingPot className="w-4 h-4" />
-            <span className="font-label-sm text-label-sm font-bold">
+            <span className="text-xs font-bold uppercase tracking-wider">
               {dish.isDailySpecial ? "Especial do Dia" : "Marmita Caipira"}
             </span>
           </div>
 
-          <h3 className="font-title-md text-title-md text-on-surface font-serif font-bold">
+          <h3 className="text-base sm:text-lg text-on-surface font-serif font-bold leading-snug">
             {dish.name}
           </h3>
 
-          <p className="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">
+          <p className="text-sm text-on-surface-variant line-clamp-2 leading-relaxed">
             {dish.description}
           </p>
         </div>
 
         {/* Guarnições Inclusas para Personalizar */}
         {includedSides.length > 0 && (
-          <div className="space-y-1">
-            <span className="font-label-sm text-label-sm text-on-surface-variant font-bold block">
-              Guarnições inclusas (marque as que deseja):
+          <div className="space-y-1 pt-1 border-t border-outline-variant/15">
+            <span className="text-xs text-on-surface-variant font-bold block">
+              Guarnições inclusas (toque para retirar):
             </span>
             <div className="flex flex-wrap gap-1.5">
               {includedSides.map((side) => {
                 const isChecked = checkedSides.includes(side.name);
                 return (
-                  <label
+                  <button
                     key={side.id}
+                    type="button"
                     onClick={() => toggleSide(side.name)}
-                    className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded cursor-pointer select-none transition-colors border ${
+                    className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg cursor-pointer select-none transition-colors border min-h-[32px] ${
                       isChecked
                         ? "bg-primary/10 border-primary/30 text-on-surface font-semibold"
                         : "bg-surface-container border-transparent text-on-surface-variant line-through opacity-70"
                     }`}
                   >
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={() => {}}
-                      className="accent-primary rounded h-3 w-3 pointer-events-none"
-                    />
+                    <span
+                      className={`w-3.5 h-3.5 rounded flex items-center justify-center text-[10px] ${
+                        isChecked ? "bg-primary text-on-primary" : "border border-outline-variant"
+                      }`}
+                    >
+                      {isChecked && <Check className="w-3 h-3" />}
+                    </span>
                     <span>{side.name}</span>
-                  </label>
+                  </button>
                 );
               })}
             </div>
           </div>
         )}
 
-        {/* Seletor de Tamanhos (P, M, G) */}
+        {/* Seletor de Tamanhos (P, M, G) - Responsivo e sem quebrar em 360px */}
         {dish.sizes.length > 1 && (
-          <div className="bg-surface-container-low p-1.5 rounded-lg border border-outline-variant/20">
+          <div className="bg-surface-container-low p-1.5 rounded-xl border border-outline-variant/20">
             <div className="grid grid-cols-3 gap-1">
               {dish.sizes.map((s) => {
                 const isSelected = selectedSize.size === s.size;
@@ -181,17 +183,17 @@ export default function DishCard({ dish, onAddedToCart }: DishCardProps) {
                     type="button"
                     onClick={() => setSelectedSize(s)}
                     disabled={dish.isPaused}
-                    className={`py-1.5 px-1 rounded text-center text-xs transition-all ${
+                    className={`min-h-[46px] py-1.5 px-1 rounded-lg text-center transition-all flex flex-col items-center justify-center ${
                       isSelected
                         ? "bg-primary text-on-primary font-bold shadow-xs scale-[1.02]"
                         : "bg-surface text-on-surface hover:bg-surface-container-high"
                     }`}
                   >
-                    <span className="block font-bold">
-                      {s.size} ({s.weight})
+                    <span className="text-xs font-bold leading-tight truncate max-w-full">
+                      {s.size} <span className="opacity-80 text-[11px]">({s.weight.replace(" ", "")})</span>
                     </span>
                     <span
-                      className={`font-extrabold ${
+                      className={`text-xs font-extrabold leading-tight ${
                         isSelected ? "text-on-primary" : "text-primary"
                       }`}
                     >
@@ -205,12 +207,12 @@ export default function DishCard({ dish, onAddedToCart }: DishCardProps) {
         )}
 
         {/* Rodapé do Card: Preço e Botão de Adição */}
-        <div className="flex items-center justify-between pt-2 border-t border-outline-variant/20">
+        <div className="flex items-center justify-between pt-2 border-t border-outline-variant/20 mt-auto">
           <div>
-            <span className="font-label-sm text-label-sm text-on-surface-variant block leading-none">
+            <span className="text-xs text-on-surface-variant block leading-none">
               Preço
             </span>
-            <span className="font-title-md text-title-md text-primary font-bold font-serif">
+            <span className="text-lg sm:text-xl text-primary font-bold font-serif">
               R$ {selectedSize.price.toFixed(2).replace(".", ",")}
             </span>
           </div>
@@ -219,7 +221,7 @@ export default function DishCard({ dish, onAddedToCart }: DishCardProps) {
             type="button"
             onClick={handleAddToCart}
             disabled={dish.isPaused}
-            className={`px-4 py-2 rounded-lg font-label-md text-label-md transition-all flex items-center gap-1.5 shadow-sm active:scale-95 font-bold ${
+            className={`px-4 py-2.5 min-h-[44px] min-w-[120px] rounded-xl text-sm transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 font-bold cursor-pointer ${
               dish.isPaused
                 ? "bg-surface-container-highest text-on-surface-variant cursor-not-allowed"
                 : addedNotice

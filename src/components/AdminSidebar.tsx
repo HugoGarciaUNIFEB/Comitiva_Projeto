@@ -11,11 +11,14 @@ import {
   ExternalLink,
   LogOut,
   Flame,
+  Menu,
+  X,
 } from "lucide-react";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
     {
@@ -57,8 +60,6 @@ export default function AdminSidebar() {
     const checkHouseStatus = () => {
       const now = new Date();
       const mins = now.getHours() * 60 + now.getMinutes();
-      // 10h30 = 630 min, 13h00 = 780 min
-      // 11h15 = 675 min, 12h30 = 750 min
       const isOpen = mins >= 630 && mins <= 780;
       const isPeak = mins >= 675 && mins <= 750;
 
@@ -91,6 +92,11 @@ export default function AdminSidebar() {
     return () => clearInterval(interval);
   }, []);
 
+  // Fecha o menu mobile quando a rota muda
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
@@ -100,22 +106,33 @@ export default function AdminSidebar() {
     }
   };
 
-  return (
-    <aside className="fixed left-0 top-0 h-full w-72 bg-inverse-surface text-inverse-on-surface z-50 flex flex-col justify-between shadow-xl">
+  const navContent = (
+    <div className="flex flex-col justify-between h-full">
       <div className="flex flex-col">
         {/* Brand Header */}
-        <div className="h-20 px-space-md flex items-center gap-space-sm bg-inverse-surface border-b border-surface-container-highest/20">
-          <div className="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center font-bold shadow-sm">
-            <Flame className="w-6 h-6 text-on-primary" />
+        <div className="h-20 px-space-md flex items-center justify-between bg-inverse-surface border-b border-surface-container-highest/20">
+          <div className="flex items-center gap-space-sm">
+            <div className="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center font-bold shadow-sm shrink-0">
+              <Flame className="w-6 h-6 text-on-primary" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-headline-sm text-headline-sm text-surface-bright tracking-tight leading-none font-bold">
+                Fogo de Chão
+              </span>
+              <span className="font-label-sm text-label-sm uppercase tracking-wider text-outline-variant mt-1 font-bold">
+                Painel Administrativo
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <span className="font-headline-sm text-headline-sm text-surface-bright tracking-tight leading-none font-bold">
-              Fogo de Chão
-            </span>
-            <span className="font-label-sm text-label-sm uppercase tracking-wider text-outline-variant mt-1 font-bold">
-              Painel Administrativo
-            </span>
-          </div>
+          {/* Botão de fechar visível no mobile */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(false)}
+            className="lg:hidden p-2 rounded-xl text-outline-variant hover:text-surface-bright hover:bg-surface-container-highest/20 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+            aria-label="Fechar menu"
+          >
+            <X className="w-6 h-6" />
+          </button>
         </div>
 
         {/* Section Label */}
@@ -135,7 +152,8 @@ export default function AdminSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-space-sm px-space-md py-3 rounded-xl transition-all ${
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-space-sm px-space-md py-3 rounded-xl transition-all min-h-[44px] ${
                   isActive
                     ? "bg-primary text-on-primary font-bold shadow-md"
                     : "text-inverse-on-surface hover:bg-surface-container-highest/20 hover:text-surface-bright"
@@ -164,7 +182,7 @@ export default function AdminSidebar() {
           <Link
             href="/"
             target="_blank"
-            className="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-outline-variant hover:text-surface-bright hover:bg-surface-container-highest/10 transition-colors"
+            className="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-outline-variant hover:text-surface-bright hover:bg-surface-container-highest/10 transition-colors min-h-[44px]"
           >
             <UtensilsCrossed className="w-5 h-5 shrink-0" />
             <span className="font-label-md text-label-md flex-1">Abrir App do Cliente</span>
@@ -220,12 +238,78 @@ export default function AdminSidebar() {
 
         <button
           onClick={handleLogout}
-          className="w-full py-2.5 px-4 rounded-xl text-outline-variant hover:text-error hover:bg-error/10 transition-colors flex items-center justify-center gap-2 font-label-md cursor-pointer font-semibold"
+          className="w-full py-2.5 px-4 rounded-xl text-outline-variant hover:text-error hover:bg-error/10 transition-colors flex items-center justify-center gap-2 font-label-md cursor-pointer font-semibold min-h-[44px]"
         >
           <LogOut className="w-4 h-4" />
           <span>Sair do Painel</span>
         </button>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* 1. Barra Superior Mobile/Tablet (visível apenas em telas < 1024px) */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-inverse-surface text-inverse-on-surface z-40 px-4 flex items-center justify-between border-b border-surface-container-highest/20 shadow-md">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center font-bold shadow-xs shrink-0">
+            <Flame className="w-5 h-5 text-on-primary" />
+          </div>
+          <span className="font-bold text-surface-bright text-base font-serif truncate max-w-[170px] sm:max-w-none">
+            Fogo de Chão • Admin
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Status rápido pill */}
+          <span
+            className={`hidden xs:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${
+              houseStatus.isOpen
+                ? "bg-surface-container-highest/20 text-surface-bright"
+                : "bg-surface-container-highest/10 text-outline-variant"
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                houseStatus.isOpen ? "bg-primary" : "bg-outline-variant"
+              }`}
+            />
+            {houseStatus.label}
+          </span>
+
+          {/* Botão Hambúrguer Mobile */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            className="p-2 min-h-[44px] min-w-[44px] rounded-xl text-surface-bright hover:bg-surface-container-highest/20 flex items-center justify-center transition-colors border border-surface-container-highest/30 active:scale-95 cursor-pointer"
+            aria-label="Abrir menu de navegação administrativa"
+          >
+            <Menu className="w-6 h-6 text-surface-bright" />
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Drawer Mobile (recolhível com backdrop) */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 overflow-hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-fade-in"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          <div className="fixed inset-y-0 left-0 max-w-full flex pr-10">
+            <aside className="w-72 max-w-[85vw] bg-inverse-surface text-inverse-on-surface shadow-2xl flex flex-col justify-between border-r border-surface-container-highest/20 animate-slide-right">
+              {navContent}
+            </aside>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Sidebar Fixa Desktop (≥1024px) - 100% Preservada */}
+      <aside className="hidden lg:flex fixed left-0 top-0 h-full w-72 bg-inverse-surface text-inverse-on-surface z-50 flex-col justify-between shadow-xl">
+        {navContent}
+      </aside>
+    </>
   );
 }

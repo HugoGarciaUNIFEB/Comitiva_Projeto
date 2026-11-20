@@ -51,31 +51,32 @@ export default function CartDrawer({ isOpen: propIsOpen, onClose: propOnClose }:
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop com blur suave */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-fade-in"
+        className="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-fade-in"
         onClick={onClose}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-surface-container-lowest shadow-2xl flex flex-col border-l border-outline-variant/30 animate-slide-left">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10 w-full sm:w-auto">
+        <div className="w-full sm:w-screen sm:max-w-md bg-surface-container-lowest shadow-2xl flex flex-col border-l border-outline-variant/30 animate-slide-left">
           {/* Header do Drawer */}
-          <div className="h-16 px-space-md bg-surface-container-low flex items-center justify-between border-b border-outline-variant/20">
-            <div className="flex items-center gap-space-xs text-primary font-serif">
-              <ShoppingBag className="w-5 h-5 text-primary" />
-              <h2 className="font-headline-sm text-headline-sm text-on-surface">
+          <div className="h-16 px-4 sm:px-6 bg-surface-container-low flex items-center justify-between border-b border-outline-variant/20">
+            <div className="flex items-center gap-2 text-primary font-serif">
+              <ShoppingBag className="w-5 h-5 text-primary shrink-0" />
+              <h2 className="text-lg sm:text-xl font-bold text-on-surface">
                 Sua Sacola de Almoço
               </h2>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface flex items-center justify-center transition-colors"
+              className="w-10 h-10 min-h-[44px] min-w-[44px] rounded-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface flex items-center justify-center transition-colors cursor-pointer"
+              aria-label="Fechar sacola"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Lista de Itens */}
-          <div className="flex-1 overflow-y-auto p-space-md space-y-space-md">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {items.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6 text-on-surface-variant">
                 <SafeImage
@@ -83,14 +84,14 @@ export default function CartDrawer({ isOpen: propIsOpen, onClose: propOnClose }:
                   alt="Carrinho vazio"
                   className="w-32 h-32 mb-3 opacity-80"
                 />
-                <p className="font-title-md text-on-surface font-bold">Sua sacola está vazia</p>
-                <p className="font-body-sm text-on-surface-variant mt-1">
+                <p className="text-base sm:text-lg text-on-surface font-bold">Sua sacola está vazia</p>
+                <p className="text-sm text-on-surface-variant mt-1">
                   Escolha uma marmita quentinha no cardápio para pedir agora!
                 </p>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="mt-4 px-6 py-2.5 bg-primary text-on-primary rounded-lg font-label-md font-bold shadow-sm hover:bg-primary-container transition-colors"
+                  className="mt-4 px-6 py-3 min-h-[44px] bg-primary text-on-primary rounded-xl font-bold text-sm shadow-sm hover:bg-primary-container transition-colors"
                 >
                   Ver Cardápio do Dia
                 </button>
@@ -99,49 +100,50 @@ export default function CartDrawer({ isOpen: propIsOpen, onClose: propOnClose }:
               items.map((item) => (
                 <div
                   key={item.id}
-                  className="p-3 bg-surface-container-low rounded-xl border border-outline-variant/30 flex flex-col gap-2"
+                  className="p-3 bg-surface-container-low rounded-2xl border border-outline-variant/30 flex flex-col gap-2"
                 >
                   <div className="flex gap-3 items-start">
                     <SafeImage
                       src={item.imageUrl}
                       alt={item.name}
                       fallbackSrc="/images/pratos/costela_fogo_chao.jpg"
-                      className="w-16 h-16 rounded-lg object-cover bg-surface-container shrink-0"
+                      className="w-16 h-16 rounded-xl object-cover bg-surface-container shrink-0"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-1">
-                        <h3 className="font-label-lg font-bold text-on-surface truncate">
+                        <h3 className="text-sm font-bold text-on-surface truncate">
                           {item.name}
                         </h3>
                         <button
                           type="button"
                           onClick={() => removeItem(item.id)}
-                          className="text-error hover:opacity-80 p-0.5"
+                          className="text-error hover:opacity-80 p-1 min-h-[36px] min-w-[36px] flex items-center justify-center"
                           title="Remover"
+                          aria-label={`Remover ${item.name}`}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
 
-                      <div className="flex items-center gap-1.5 mt-0.5">
+                      <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                         {item.size !== "UNICO" && (
-                          <span className="bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-1.5 py-0.2 rounded">
+                          <span className="bg-primary-fixed text-on-primary-fixed text-[11px] font-bold px-1.5 py-0.5 rounded">
                             Tam {item.size} • {item.weight}
                           </span>
                         )}
-                        <span className="font-label-md text-primary font-bold">
+                        <span className="text-sm text-primary font-bold">
                           R$ {item.unitPrice.toFixed(2).replace(".", ",")}
                         </span>
                       </div>
 
                       {item.includedSides && item.includedSides.length > 0 && (
-                        <p className="font-body-sm text-[11px] text-on-surface-variant line-clamp-1 mt-0.5">
+                        <p className="text-xs text-on-surface-variant line-clamp-1 mt-0.5">
                           Guarnições: {item.includedSides.join(", ")}
                         </p>
                       )}
 
                       {item.addedSides && item.addedSides.length > 0 && (
-                        <p className="font-body-sm text-[11px] text-tertiary-container line-clamp-1">
+                        <p className="text-xs text-tertiary-container line-clamp-1">
                           Adicionais: {item.addedSides.map((s) => s.name).join(", ")}
                         </p>
                       )}
@@ -150,11 +152,12 @@ export default function CartDrawer({ isOpen: propIsOpen, onClose: propOnClose }:
 
                   {/* Controle de Quantidade e Subtotal */}
                   <div className="flex items-center justify-between pt-1 border-t border-outline-variant/20">
-                    <div className="flex items-center bg-surface-container-lowest rounded-lg border border-outline-variant/30">
+                    <div className="flex items-center bg-surface-container-lowest rounded-xl border border-outline-variant/30">
                       <button
                         type="button"
                         onClick={() => updateQuantity(item.id, -1)}
-                        className="w-7 h-7 flex items-center justify-center hover:bg-surface-container-high text-on-surface font-bold text-base"
+                        className="w-9 h-9 min-h-[36px] min-w-[36px] flex items-center justify-center hover:bg-surface-container-high text-on-surface font-bold text-base"
+                        aria-label="Diminuir"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
@@ -164,13 +167,14 @@ export default function CartDrawer({ isOpen: propIsOpen, onClose: propOnClose }:
                       <button
                         type="button"
                         onClick={() => updateQuantity(item.id, 1)}
-                        className="w-7 h-7 flex items-center justify-center hover:bg-surface-container-high text-on-surface font-bold text-base"
+                        className="w-9 h-9 min-h-[36px] min-w-[36px] flex items-center justify-center hover:bg-surface-container-high text-on-surface font-bold text-base"
+                        aria-label="Aumentar"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
 
-                    <span className="font-title-md text-sm text-on-surface font-bold">
+                    <span className="text-base text-on-surface font-bold font-serif">
                       R${" "}
                       {(
                         (item.unitPrice +
@@ -188,7 +192,7 @@ export default function CartDrawer({ isOpen: propIsOpen, onClose: propOnClose }:
 
           {/* Rodapé Financeiro e Botão Checkout */}
           {items.length > 0 && (
-            <div className="p-space-md bg-surface-container border-t border-outline-variant/20 space-y-3">
+            <div className="p-4 bg-surface-container border-t border-outline-variant/20 space-y-3">
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between text-on-surface-variant">
                   <span>Subtotal</span>
@@ -220,8 +224,8 @@ export default function CartDrawer({ isOpen: propIsOpen, onClose: propOnClose }:
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-xs text-secondary font-semibold bg-tertiary-fixed/30 p-2 rounded-lg">
-                  <Award className="w-4 h-4 text-tertiary" />
+                <div className="flex items-center gap-1.5 text-xs text-secondary font-semibold bg-tertiary-fixed/30 p-2 rounded-xl">
+                  <Award className="w-4 h-4 text-tertiary shrink-0" />
                   <span>
                     Você acumula <strong>{getEstimatedPoints()} pontos</strong> neste pedido!
                   </span>
@@ -231,7 +235,7 @@ export default function CartDrawer({ isOpen: propIsOpen, onClose: propOnClose }:
               <Link
                 href="/checkout"
                 onClick={onClose}
-                className="w-full h-12 bg-primary hover:bg-primary-container text-on-primary font-label-lg rounded-lg shadow-md flex items-center justify-center gap-2 transition-transform active:scale-95 font-bold"
+                className="w-full h-12 min-h-[48px] bg-primary hover:bg-primary-container text-on-primary font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-transform active:scale-95 text-base"
               >
                 <span>Finalizar Pedido no Checkout</span>
                 <ArrowRight className="w-5 h-5" />

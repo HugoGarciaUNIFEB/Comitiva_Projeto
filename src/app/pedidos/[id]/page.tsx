@@ -29,7 +29,12 @@ import {
   UtensilsCrossed,
   PackageCheck,
 } from "lucide-react";
-import { getOrderStatusConfig, formatCurrency, formatPaymentMethod } from "@/lib/orderStatus";
+import {
+  getOrderStatusConfig,
+  getOrderStepIndex,
+  formatCurrency,
+  formatPaymentMethod,
+} from "@/lib/orderStatus";
 
 interface OrderItem {
   id: string;
@@ -106,11 +111,10 @@ export default function OrderTrackingPage() {
     return () => clearInterval(interval);
   }, [orderId]);
 
-  const statusConfig = getOrderStatusConfig(order?.status);
   const isDelivery = order?.deliveryType === "ENTREGA";
-  const rawStep = statusConfig.stepIndex >= 0 ? statusConfig.stepIndex : 0;
-  // Para retirada, se já estiver entregue (stepIndex 4), mapeia para o último passo (3)
-  const currentStep = !isDelivery && rawStep >= 3 ? 3 : rawStep;
+  const statusConfig = getOrderStatusConfig(order?.status, isDelivery);
+  const currentStep = getOrderStepIndex(order?.status, isDelivery);
+  const isDelivered = (order?.status || "").toUpperCase() === "ENTREGUE";
 
   return (
     <div className="min-h-screen bg-background font-body-md text-on-surface flex flex-col">
@@ -141,7 +145,7 @@ export default function OrderTrackingPage() {
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
                 </span>
                 <span className="font-label-sm text-label-sm text-on-surface uppercase tracking-wider font-bold">
-                  Atualização em tempo real (Polling 5s) • Cozinha Jaborandi
+                  Atualização em tempo real • Cozinha Jaborandi
                 </span>
               </div>
             </div>
@@ -234,7 +238,8 @@ export default function OrderTrackingPage() {
                     </span>
                   </div>
 
-                  <div className="relative w-full py-space-md">
+                  {/* Horizontal Stepper Timeline (Desktop / Tablet) */}
+                  <div className="hidden md:block relative w-full py-space-md">
                     {/* Linha de Conexão Fundo */}
                     <div className="absolute top-10 left-8 right-8 h-1.5 bg-surface-container-highest -translate-y-1/2 z-0 rounded-full" />
 
@@ -242,7 +247,9 @@ export default function OrderTrackingPage() {
                     <div
                       className="absolute top-10 left-8 h-1.5 bg-primary -translate-y-1/2 z-0 rounded-full transition-all duration-700 ease-out"
                       style={{
-                        width: isDelivery
+                        width: isDelivered
+                          ? "100%"
+                          : isDelivery
                           ? `${Math.min(100, Math.max(0, (currentStep / 4) * 88 + 6))}%`
                           : `${Math.min(100, Math.max(0, (currentStep / 3) * 88 + 6))}%`,
                       }}
@@ -255,7 +262,7 @@ export default function OrderTrackingPage() {
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-12 h-12 rounded-full flex items-center justify-center shadow-md mb-space-sm transition-all ${
-                              currentStep >= 0
+                              isDelivered || currentStep >= 0
                                 ? "bg-primary text-on-primary"
                                 : "bg-surface-container-high text-on-surface-variant"
                             }`}
@@ -276,12 +283,12 @@ export default function OrderTrackingPage() {
                         {/* Step 2: No Fogão */}
                         <div className="flex flex-col items-center">
                           <div className="relative mb-space-sm">
-                            {currentStep === 1 && (
+                            {!isDelivered && currentStep === 1 && (
                               <div className="absolute -inset-2 rounded-full bg-primary/25 animate-ping" />
                             )}
                             <div
                               className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all ${
-                                currentStep >= 1
+                                isDelivered || currentStep >= 1
                                   ? "bg-primary text-on-primary"
                                   : "bg-surface-container-high text-on-surface-variant"
                               }`}
@@ -291,7 +298,7 @@ export default function OrderTrackingPage() {
                           </div>
                           <span
                             className={`font-title-md text-title-md ${
-                              currentStep === 1
+                              !isDelivered && currentStep === 1
                                 ? "text-primary font-bold"
                                 : "text-on-surface"
                             }`}
@@ -301,17 +308,26 @@ export default function OrderTrackingPage() {
                           <span className="font-label-sm text-label-sm text-on-surface-variant">
                             Panelas de ferro
                           </span>
+                          {isDelivered || currentStep > 1 ? (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-tertiary uppercase">
+                              <Check className="w-3.5 h-3.5" /> Concluído
+                            </span>
+                          ) : !isDelivered && currentStep === 1 ? (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-primary uppercase">
+                              Em andamento
+                            </span>
+                          ) : null}
                         </div>
 
                         {/* Step 3: Pronto na Bancada */}
                         <div className="flex flex-col items-center">
                           <div className="relative mb-space-sm">
-                            {currentStep === 2 && (
+                            {!isDelivered && currentStep === 2 && (
                               <div className="absolute -inset-2 rounded-full bg-primary/25 animate-ping" />
                             )}
                             <div
                               className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${
-                                currentStep >= 2
+                                isDelivered || currentStep >= 2
                                   ? "bg-primary text-on-primary"
                                   : "bg-surface-container-high text-on-surface-variant"
                               }`}
@@ -321,7 +337,7 @@ export default function OrderTrackingPage() {
                           </div>
                           <span
                             className={`font-title-md text-title-md ${
-                              currentStep === 2
+                              !isDelivered && currentStep === 2
                                 ? "text-primary font-bold"
                                 : "text-on-surface"
                             }`}
@@ -331,17 +347,26 @@ export default function OrderTrackingPage() {
                           <span className="font-label-sm text-label-sm text-on-surface-variant">
                             Embalado quente
                           </span>
+                          {isDelivered || currentStep > 2 ? (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-tertiary uppercase">
+                              <Check className="w-3.5 h-3.5" /> Concluído
+                            </span>
+                          ) : !isDelivered && currentStep === 2 ? (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-primary uppercase">
+                              Em andamento
+                            </span>
+                          ) : null}
                         </div>
 
                         {/* Step 4: A Caminho (EM_ROTA) */}
                         <div className="flex flex-col items-center">
                           <div className="relative mb-space-sm">
-                            {currentStep === 3 && (
+                            {!isDelivered && currentStep === 3 && (
                               <div className="absolute -inset-2 rounded-full bg-primary/25 animate-ping" />
                             )}
                             <div
                               className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${
-                                currentStep >= 3
+                                isDelivered || currentStep >= 3
                                   ? "bg-primary text-on-primary"
                                   : "bg-surface-container-high text-on-surface-variant"
                               }`}
@@ -351,7 +376,7 @@ export default function OrderTrackingPage() {
                           </div>
                           <span
                             className={`font-title-md text-title-md ${
-                              currentStep === 3
+                              !isDelivered && currentStep === 3
                                 ? "text-primary font-bold animate-pulse"
                                 : "text-on-surface"
                             }`}
@@ -361,22 +386,31 @@ export default function OrderTrackingPage() {
                           <span className="font-label-sm text-label-sm text-on-surface-variant">
                             Caixa selada
                           </span>
+                          {isDelivered || currentStep > 3 ? (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-tertiary uppercase">
+                              <Check className="w-3.5 h-3.5" /> Concluído
+                            </span>
+                          ) : !isDelivered && currentStep === 3 ? (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-primary uppercase">
+                              Em andamento
+                            </span>
+                          ) : null}
                         </div>
 
                         {/* Step 5: Entregue */}
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm mb-space-sm transition-all ${
-                              currentStep >= 4
+                              isDelivered
                                 ? "bg-primary text-on-primary"
                                 : "bg-surface-container-high text-on-surface-variant"
                             }`}
                           >
-                            <Utensils className="w-6 h-6" />
+                            {isDelivered ? <CheckCheck className="w-6 h-6" /> : <Utensils className="w-6 h-6" />}
                           </div>
                           <span
                             className={`font-title-md text-title-md ${
-                              currentStep >= 4
+                              isDelivered
                                 ? "text-primary font-bold"
                                 : "text-on-surface"
                             }`}
@@ -386,6 +420,11 @@ export default function OrderTrackingPage() {
                           <span className="font-label-sm text-label-sm text-on-surface-variant">
                             Na sua mesa
                           </span>
+                          {isDelivered && (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-tertiary uppercase">
+                              <CheckCheck className="w-3.5 h-3.5" /> Concluído
+                            </span>
+                          )}
                         </div>
                       </div>
                     ) : (
@@ -394,7 +433,7 @@ export default function OrderTrackingPage() {
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-12 h-12 rounded-full flex items-center justify-center shadow-md mb-space-sm transition-all ${
-                              currentStep >= 0
+                              isDelivered || currentStep >= 0
                                 ? "bg-primary text-on-primary"
                                 : "bg-surface-container-high text-on-surface-variant"
                             }`}
@@ -415,12 +454,12 @@ export default function OrderTrackingPage() {
                         {/* Step 2: No Fogão a Lenha */}
                         <div className="flex flex-col items-center">
                           <div className="relative mb-space-sm">
-                            {currentStep === 1 && (
+                            {!isDelivered && currentStep === 1 && (
                               <div className="absolute -inset-2 rounded-full bg-primary/25 animate-ping" />
                             )}
                             <div
                               className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all ${
-                                currentStep >= 1
+                                isDelivered || currentStep >= 1
                                   ? "bg-primary text-on-primary"
                                   : "bg-surface-container-high text-on-surface-variant"
                               }`}
@@ -430,7 +469,7 @@ export default function OrderTrackingPage() {
                           </div>
                           <span
                             className={`font-title-md text-title-md ${
-                              currentStep === 1
+                              !isDelivered && currentStep === 1
                                 ? "text-primary font-bold"
                                 : "text-on-surface"
                             }`}
@@ -440,17 +479,26 @@ export default function OrderTrackingPage() {
                           <span className="font-label-sm text-label-sm text-on-surface-variant">
                             Panelas de ferro
                           </span>
+                          {isDelivered || currentStep > 1 ? (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-tertiary uppercase">
+                              <Check className="w-3.5 h-3.5" /> Concluído
+                            </span>
+                          ) : !isDelivered && currentStep === 1 ? (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-primary uppercase">
+                              Em andamento
+                            </span>
+                          ) : null}
                         </div>
 
                         {/* Step 3: Pronto no Balcão */}
                         <div className="flex flex-col items-center">
                           <div className="relative mb-space-sm">
-                            {currentStep === 2 && (
+                            {!isDelivered && currentStep === 2 && (
                               <div className="absolute -inset-2 rounded-full bg-primary/25 animate-ping" />
                             )}
                             <div
                               className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${
-                                currentStep >= 2
+                                isDelivered || currentStep >= 2
                                   ? "bg-primary text-on-primary"
                                   : "bg-surface-container-high text-on-surface-variant"
                               }`}
@@ -460,7 +508,7 @@ export default function OrderTrackingPage() {
                           </div>
                           <span
                             className={`font-title-md text-title-md ${
-                              currentStep === 2
+                              !isDelivered && currentStep === 2
                                 ? "text-primary font-bold"
                                 : "text-on-surface"
                             }`}
@@ -470,34 +518,176 @@ export default function OrderTrackingPage() {
                           <span className="font-label-sm text-label-sm text-on-surface-variant">
                             Pode retirar!
                           </span>
+                          {isDelivered || currentStep > 2 ? (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-tertiary uppercase">
+                              <Check className="w-3.5 h-3.5" /> Concluído
+                            </span>
+                          ) : !isDelivered && currentStep === 2 ? (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-primary uppercase">
+                              Em andamento
+                            </span>
+                          ) : null}
                         </div>
 
-                        {/* Step 4: Entregue / Retirado */}
+                        {/* Step 4: Retirado */}
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm mb-space-sm transition-all ${
-                              currentStep >= 3
+                              isDelivered
                                 ? "bg-primary text-on-primary"
                                 : "bg-surface-container-high text-on-surface-variant"
                             }`}
                           >
-                            <Utensils className="w-6 h-6" />
+                            {isDelivered ? <CheckCheck className="w-6 h-6" /> : <Utensils className="w-6 h-6" />}
                           </div>
                           <span
                             className={`font-title-md text-title-md ${
-                              currentStep >= 3
+                              isDelivered
                                 ? "text-primary font-bold"
                                 : "text-on-surface"
                             }`}
                           >
-                            Entregue
+                            Retirado
                           </span>
                           <span className="font-label-sm text-label-sm text-on-surface-variant">
                             Retirado no balcão
                           </span>
+                          {isDelivered && (
+                            <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-tertiary uppercase">
+                              <CheckCheck className="w-3.5 h-3.5" /> Concluído
+                            </span>
+                          )}
                         </div>
                       </div>
                     )}
+                  </div>
+
+                  {/* Vertical Stepper no Celular (≤767px) */}
+                  <div className="md:hidden py-2 space-y-4">
+                    {(isDelivery
+                      ? [
+                          {
+                            step: 0,
+                            title: "Aprovado",
+                            desc: `Recebido via ${formatPaymentMethod(order.paymentMethod)}`,
+                            icon: Check,
+                          },
+                          {
+                            step: 1,
+                            title: "No Fogão a Lenha",
+                            desc: "Cozinhando em tachos e panelas de ferro",
+                            icon: CookingPot,
+                          },
+                          {
+                            step: 2,
+                            title: "Pronto na Bancada",
+                            desc: "Marmita artesanal embalada e quentinha",
+                            icon: PackageCheck,
+                          },
+                          {
+                            step: 3,
+                            title: "A Caminho",
+                            desc: "Entregador da comitiva em rota de entrega",
+                            icon: Bike,
+                          },
+                          {
+                            step: 4,
+                            title: "Entregue",
+                            desc: "Bom almoço caipira!",
+                            icon: isDelivered ? CheckCheck : Utensils,
+                          },
+                        ]
+                      : [
+                          {
+                            step: 0,
+                            title: "Aprovado",
+                            desc: `Recebido via ${formatPaymentMethod(order.paymentMethod)}`,
+                            icon: Check,
+                          },
+                          {
+                            step: 1,
+                            title: "No Fogão a Lenha",
+                            desc: "Cozinhando em panelas de ferro",
+                            icon: CookingPot,
+                          },
+                          {
+                            step: 2,
+                            title: "Pronto no Balcão",
+                            desc: "Pode retirar seu almoço quentinho!",
+                            icon: PackageCheck,
+                          },
+                          {
+                            step: 3,
+                            title: "Retirado",
+                            desc: "Retirado no balcão • Bom apetite!",
+                            icon: isDelivered ? CheckCheck : Utensils,
+                          },
+                        ]
+                    ).map((item, idx, arr) => {
+                      const Icon = item.icon;
+                      const isDone = isDelivered || currentStep > item.step;
+                      const isCurrent = !isDelivered && currentStep === item.step;
+                      const isLast = idx === arr.length - 1;
+
+                      return (
+                        <div key={item.step} className="flex items-start gap-3.5 relative">
+                          {/* Linha vertical conectora */}
+                          {!isLast && (
+                            <div
+                              className={`absolute left-5 top-10 bottom-0 w-0.5 -mb-4 transition-colors ${
+                                isDone ? "bg-primary" : "bg-surface-container-highest"
+                              }`}
+                            />
+                          )}
+
+                          {/* Ícone da etapa */}
+                          <div className="relative shrink-0">
+                            {isCurrent && (
+                              <div className="absolute -inset-1 rounded-full bg-primary/25 animate-ping" />
+                            )}
+                            <div
+                              className={`relative w-10 h-10 rounded-full flex items-center justify-center shadow-sm transition-all ${
+                                isDone || isCurrent
+                                  ? "bg-primary text-on-primary"
+                                  : "bg-surface-container-high text-on-surface-variant"
+                              }`}
+                            >
+                              <Icon className="w-5 h-5" />
+                            </div>
+                          </div>
+
+                          {/* Conteúdo textual da etapa */}
+                          <div className="flex-1 min-w-0 pt-0.5 pb-2">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span
+                                className={`text-base font-bold leading-tight ${
+                                  isCurrent
+                                    ? "text-primary"
+                                    : isDone
+                                    ? "text-on-surface"
+                                    : "text-on-surface-variant"
+                                }`}
+                              >
+                                {item.title}
+                              </span>
+                              {isCurrent && (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary">
+                                  Em andamento
+                                </span>
+                              )}
+                              {isDone && (
+                                <span className="text-tertiary text-xs font-semibold flex items-center gap-0.5">
+                                  <Check className="w-3.5 h-3.5" /> Concluído
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs sm:text-sm text-on-surface-variant mt-0.5">
+                              {item.desc}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 

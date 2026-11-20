@@ -33,6 +33,7 @@ import {
   Clock,
   CookingPot,
   Bike,
+  PackageCheck,
   XCircle,
   Info,
   LogOut,
@@ -60,7 +61,8 @@ interface Order {
   orderNumber: number;
   status: string;
   total: number;
-  deliveryType: string;
+  deliveryType?: string;
+  orderType?: string;
   paymentMethod: string;
   pointsEarned: number;
   createdAt: string;
@@ -281,8 +283,8 @@ export default function ContaPage() {
   };
 
   // Formata status do pedido usando a fonte única do sistema
-  const getStatusBadge = (status: string) => {
-    const config = getOrderStatusConfig(status);
+  const getStatusBadge = (status: string, isDelivery: boolean = true) => {
+    const config = getOrderStatusConfig(status, isDelivery);
     const upper = (status || "").toUpperCase();
     return {
       label: config.label,
@@ -290,7 +292,9 @@ export default function ContaPage() {
       icon:
         upper === "NO_FOGAO" ? (
           <CookingPot className="w-4 h-4" />
-        ) : upper === "PRONTO" || upper === "EM_ROTA" ? (
+        ) : upper === "PRONTO" ? (
+          <PackageCheck className="w-4 h-4" />
+        ) : upper === "EM_ROTA" ? (
           <Bike className="w-4 h-4" />
         ) : upper === "ENTREGUE" ? (
           <CheckCircle2 className="w-4 h-4 text-primary" />
@@ -615,7 +619,8 @@ export default function ContaPage() {
                 <div className="flex flex-col gap-space-md">
                   {profile?.orders && profile.orders.length > 0 ? (
                     profile.orders.map((order) => {
-                      const badge = getStatusBadge(order.status);
+                      const isDelivery = order.deliveryType === "ENTREGA" || order.orderType === "DELIVERY";
+                      const badge = getStatusBadge(order.status, isDelivery);
 
                       return (
                         <article
@@ -829,19 +834,21 @@ export default function ContaPage() {
         </div>
       </main>
 
-      {/* Modal de Adicionar / Editar Endereço (Design Stitch) */}
+      {/* Modal de Adicionar / Editar Endereço */}
       {isAddressModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-surface-container-lowest rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-outline-variant/30 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-0 sm:p-4">
+          <div className="bg-surface-container-lowest h-full sm:h-auto rounded-none sm:rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border-0 sm:border border-outline-variant/30 flex flex-col justify-between overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-outline-variant/20 mb-6">
               <h3 className="font-headline-sm text-headline-sm text-on-surface">
                 {editingAddressId ? "Editar Endereço" : "Novo Endereço de Entrega"}
               </h3>
               <button
+                type="button"
                 onClick={() => setIsAddressModalOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center cursor-pointer"
+                className="w-10 h-10 min-h-[44px] min-w-[44px] rounded-full hover:bg-surface-container-high flex items-center justify-center cursor-pointer"
+                aria-label="Fechar"
               >
-                <X className="w-4 h-4 text-on-surface-variant" />
+                <X className="w-5 h-5 text-on-surface-variant" />
               </button>
             </div>
 

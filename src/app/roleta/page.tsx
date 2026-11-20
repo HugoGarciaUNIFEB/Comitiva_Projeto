@@ -182,7 +182,7 @@ export default function RoletaPage() {
       <Header />
       <CartDrawer />
 
-      <main className="w-full pt-28 bg-background flex-1">
+      <main className="w-full pt-24 sm:pt-28 pb-16 bg-background flex-1 overflow-x-hidden">
         <div className="flex flex-col w-full">
           {/* Hero / Roleta Section */}
           <section className="relative w-full overflow-hidden pb-space-xl">
@@ -217,15 +217,15 @@ export default function RoletaPage() {
               {/* Grid: Wheel and Result Cards */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-start">
                 {/* Left: Roleta Wheel Card */}
-                <div className="lg:col-span-7 flex flex-col items-center">
-                  <div className="relative w-full max-w-[540px] p-6 sm:p-8 rounded-3xl bg-surface-container-lowest shadow-xl flex flex-col items-center border border-outline-variant/30">
+                <div className="lg:col-span-7 flex flex-col items-center w-full">
+                  <div className="relative w-full max-w-[540px] p-3 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-surface-container-lowest shadow-xl flex flex-col items-center border border-outline-variant/30 overflow-hidden">
                     {/* Pointer Marker */}
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center">
                       <svg
                         className="drop-shadow-lg text-secondary"
-                        height="52"
+                        height="48"
                         viewBox="0 0 44 52"
-                        width="44"
+                        width="40"
                       >
                         <path
                           d="M22 50 L4 10 Q2 4 8 4 L36 4 Q42 4 40 10 Z"
@@ -235,8 +235,8 @@ export default function RoletaPage() {
                       </svg>
                     </div>
 
-                    {/* Spinning Wheel Container */}
-                    <div className="relative w-[320px] h-[320px] sm:w-[420px] sm:h-[420px] rounded-full p-3 bg-surface-container shadow-inner flex items-center justify-center">
+                    {/* Spinning Wheel Container - Responsivo sem estourar em 360px */}
+                    <div className="relative w-[270px] h-[270px] xs:w-[310px] xs:h-[310px] sm:w-[380px] sm:h-[380px] md:w-[420px] md:h-[420px] max-w-[calc(100vw-48px)] max-h-[calc(100vw-48px)] rounded-full p-2 sm:p-3 bg-surface-container shadow-inner flex items-center justify-center">
                       <div className="absolute inset-0 rounded-full bg-secondary/10" />
 
                       <div

@@ -79,19 +79,19 @@ export default function SpecialDishHero({
   const subtotal = selectedSize.price * quantity;
 
   return (
-    <section className="max-w-7xl mx-auto px-margin-lg -mt-8 relative z-20 w-full mb-space-xl">
-      <div className="bg-surface-container-lowest rounded-2xl shadow-xl overflow-hidden p-6 md:p-8 border border-outline-variant/30">
-        <div className="flex flex-col lg:flex-row gap-gutter-lg items-center">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 -mt-4 sm:-mt-8 relative z-20 w-full mb-8 sm:mb-12">
+      <div className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden p-4 sm:p-6 md:p-8 border border-outline-variant/30">
+        <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-center">
           {/* Imagem do Prato Especial com Selo */}
           <div className="w-full lg:w-5/12 shrink-0">
-            <div className="relative rounded-xl overflow-hidden aspect-[16/10] bg-surface-container shadow-md">
+            <div className="relative rounded-2xl overflow-hidden aspect-[16/10] bg-surface-container shadow-md">
               <SafeImage
                 src={specialDish.imageUrl}
                 alt={specialDish.name}
                 fallbackSrc="/images/banners/prato_dia_hero.jpg"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute top-3 left-3 bg-tertiary text-on-tertiary px-3 py-1.5 rounded-full font-label-md text-label-md shadow-md flex items-center gap-1.5 font-bold">
+              <div className="absolute top-3 left-3 bg-tertiary text-on-tertiary px-3 py-1.5 rounded-full text-xs sm:text-sm shadow-md flex items-center gap-1.5 font-bold">
                 <Flame className="w-4 h-4 text-tertiary-fixed-dim" />
                 <span>Mais Pedido de Hoje</span>
               </div>
@@ -99,39 +99,39 @@ export default function SpecialDishHero({
           </div>
 
           {/* Conteúdo & Ação do Prato do Dia */}
-          <div className="w-full lg:w-7/12 space-y-space-md flex flex-col justify-between">
-            <div className="space-y-space-xs">
+          <div className="w-full lg:w-7/12 space-y-4 flex flex-col justify-between">
+            <div className="space-y-2">
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="font-label-sm text-label-sm text-primary font-bold uppercase tracking-widest bg-primary/10 px-2.5 py-1 rounded-full">
+                <span className="text-xs text-primary font-bold uppercase tracking-wider bg-primary/10 px-2.5 py-1 rounded-full">
                   Especial do Dia • Fogão a Lenha
                 </span>
-                <span className="flex items-center gap-1 text-tertiary font-label-md text-label-md font-bold">
+                <span className="flex items-center gap-1 text-tertiary text-xs sm:text-sm font-bold">
                   <Star className="w-4 h-4 fill-current text-tertiary" />
                   4.9 (380+ avaliações)
                 </span>
               </div>
 
-              <h2 className="font-headline-lg text-headline-lg text-on-surface font-serif">
+              <h2 className="text-xl sm:text-2xl md:text-3xl text-on-surface font-serif font-bold">
                 {specialDish.name}
               </h2>
 
-              <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed">
                 {specialDish.description}
               </p>
             </div>
 
-            {/* Seleção de Tamanhos do Especial */}
-            <div className="bg-surface-container-low p-4 rounded-xl space-y-space-xs border border-outline-variant/20">
+            {/* Seleção de Tamanhos do Especial (Responsivo) */}
+            <div className="bg-surface-container-low p-3 sm:p-4 rounded-xl sm:rounded-2xl space-y-2 border border-outline-variant/20">
               <div className="flex items-center justify-between">
-                <span className="font-label-md text-label-md text-on-surface font-bold">
-                  Escolha a porção para hoje:
+                <span className="text-xs sm:text-sm text-on-surface font-bold">
+                  Escolha a porção:
                 </span>
-                <span className="font-label-sm text-label-sm text-primary font-semibold">
+                <span className="text-xs text-primary font-semibold hidden sm:inline">
                   Preço ajustado automaticamente
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-space-sm">
+              <div className="grid grid-cols-3 gap-2">
                 {specialDish.sizes.map((s) => {
                   const isActive = selectedSize.size === s.size;
                   return (
@@ -139,28 +139,28 @@ export default function SpecialDishHero({
                       key={s.id}
                       type="button"
                       onClick={() => setSelectedSize(s)}
-                      className={`flex flex-col items-center py-2.5 px-3 rounded-lg transition-all ${
+                      className={`flex flex-col items-center justify-center py-2 px-1 sm:px-3 rounded-xl transition-all min-h-[52px] ${
                         isActive
                           ? "bg-primary text-on-primary shadow-md scale-[1.02] font-bold"
                           : "bg-surface-container text-on-surface hover:bg-surface-container-highest"
                       }`}
                     >
-                      <span className="font-label-lg text-label-lg">
-                        {s.size} ({s.weight})
+                      <span className="text-xs sm:text-sm font-bold leading-tight">
+                        {s.size} ({s.weight.replace(" ", "")})
                       </span>
                       <span
-                        className={`font-label-sm text-label-sm ${
+                        className={`text-[11px] sm:text-xs leading-tight hidden xs:inline ${
                           isActive ? "text-primary-fixed" : "text-on-surface-variant"
                         }`}
                       >
                         {s.size === "P"
                           ? "Individual"
                           : s.size === "M"
-                          ? "Fartura caipira"
+                          ? "Fartura"
                           : "Para dois"}
                       </span>
-                      <span className="font-title-md text-title-md font-extrabold mt-1">
-                        R$ {s.price.toFixed(2).replace(".", ",")}
+                      <span className="text-xs sm:text-base font-extrabold mt-0.5 leading-tight">
+                        R$ {s.price.toFixed(0)}
                       </span>
                     </button>
                   );
@@ -168,34 +168,36 @@ export default function SpecialDishHero({
               </div>
             </div>
 
-            {/* Ação Direta: Quantidade e Botão Sacola */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-space-md pt-2">
-              <div className="flex items-center gap-space-sm w-full sm:w-auto">
-                <div className="flex items-center bg-surface-container rounded-lg p-1 border border-outline-variant/30">
+            {/* Ação: Quantidade e Botão Sacola */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+              <div className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto">
+                <div className="flex items-center bg-surface-container rounded-xl p-1 border border-outline-variant/30">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-surface-container-highest text-on-surface font-bold text-lg"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-surface-container-highest text-on-surface font-bold text-lg min-h-[40px] min-w-[40px]"
+                    aria-label="Diminuir quantidade"
                   >
                     -
                   </button>
-                  <span className="w-10 text-center font-bold text-on-surface font-title-md text-title-md">
+                  <span className="w-10 text-center font-bold text-on-surface text-base">
                     {quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-surface-container-highest text-on-surface font-bold text-lg"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-surface-container-highest text-on-surface font-bold text-lg min-h-[40px] min-w-[40px]"
+                    aria-label="Aumentar quantidade"
                   >
                     +
                   </button>
                 </div>
 
-                <div className="flex flex-col">
-                  <span className="font-label-sm text-label-sm text-on-surface-variant">
-                    Subtotal marmita
+                <div className="flex flex-col text-right sm:text-left">
+                  <span className="text-xs text-on-surface-variant leading-none">
+                    Subtotal
                   </span>
-                  <span className="font-title-md text-title-md text-primary font-bold font-serif">
+                  <span className="text-lg sm:text-xl text-primary font-bold font-serif">
                     R$ {subtotal.toFixed(2).replace(".", ",")}
                   </span>
                 </div>
@@ -205,7 +207,7 @@ export default function SpecialDishHero({
                 type="button"
                 onClick={handleAddToCart}
                 disabled={specialDish.isPaused}
-                className={`w-full sm:w-auto px-8 py-3.5 rounded-lg font-label-lg text-label-lg shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 font-bold ${
+                className={`w-full sm:w-auto px-6 py-3 min-h-[48px] rounded-xl text-sm sm:text-base shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 font-bold cursor-pointer ${
                   specialDish.isPaused
                     ? "bg-surface-container-highest text-on-surface-variant cursor-not-allowed"
                     : addedNotice
@@ -219,7 +221,7 @@ export default function SpecialDishHero({
                     ? "Esgotado no Fogão"
                     : addedNotice
                     ? "Adicionado à Sacola!"
-                    : "Adicionar à Sacola de Almoço"}
+                    : "Adicionar à Sacola"}
                 </span>
               </button>
             </div>

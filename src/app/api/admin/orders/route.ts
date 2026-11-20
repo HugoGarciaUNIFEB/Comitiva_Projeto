@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { getOrderChannelLabel } from "@/lib/orderStatus";
+import { getOrderChannelLabel, isTodaySaoPaulo } from "@/lib/orderStatus";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -37,6 +37,7 @@ export async function GET() {
         !o.deliveryAddress.toLowerCase().includes("retirada no balcão")
       );
       const isDelivery = o.orderType === "DELIVERY" && hasDeliveryAddress;
+      const isDeliveredToday = o.status === "ENTREGUE" && isTodaySaoPaulo(o.updatedAt);
 
       return {
         ...o,
@@ -44,19 +45,17 @@ export async function GET() {
         deliveryType: isDelivery ? ("ENTREGA" as const) : ("RETIRADA" as const),
         orderOrigin: getOrderChannelLabel(o.channel),
         addressStreet: isDelivery ? o.deliveryAddress : null,
+        isDeliveredToday,
       };
     });
 
-    // Contadores para o KDS
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-
+    // Contadores para o KDS (considerando fuso America/Sao_Paulo)
     const aguardando = orders.filter((o) => o.status === "AGUARDANDO");
     const noFogao = orders.filter((o) => o.status === "NO_FOGAO");
     const pronto = orders.filter((o) => o.status === "PRONTO");
     const emRota = orders.filter((o) => o.status === "EM_ROTA");
     const entreguesHoje = orders.filter(
-      (o) => o.status === "ENTREGUE" && new Date(o.updatedAt) >= todayStart
+      (o) => o.status === "ENTREGUE" && isTodaySaoPaulo(o.updatedAt)
     );
 
     // Marmitas entregues hoje calculadas do banco

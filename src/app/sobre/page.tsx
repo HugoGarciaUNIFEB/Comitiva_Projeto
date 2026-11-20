@@ -25,7 +25,7 @@ export default function SobrePage() {
       <Header />
       <CartDrawer isOpen={false} onClose={() => {}} />
 
-      <main className="w-full pt-28 bg-background flex-1">
+      <main className="w-full pt-24 sm:pt-28 pb-16 bg-background flex-1 overflow-x-hidden">
         <div className="flex flex-col w-full">
           {/* Top Editorial Ambience Scrim / Sub-hero banner */}
           <section className="relative w-full overflow-hidden bg-surface-container-low border-b border-outline-variant/20">
@@ -80,8 +80,8 @@ export default function SobrePage() {
                     </div>
                   </div>
 
-                  {/* Floating badge */}
-                  <div className="absolute -bottom-4 -left-4 bg-surface p-space-md rounded-2xl shadow-xl flex items-center gap-space-sm max-w-xs border border-outline-variant/30">
+                  {/* Floating badge (Responsivo e sem estourar margem esquerda) */}
+                  <div className="relative sm:absolute sm:-bottom-4 sm:-left-4 mt-3 sm:mt-0 bg-surface p-3.5 sm:p-4 rounded-2xl shadow-xl flex items-center gap-3 max-w-full sm:max-w-xs border border-outline-variant/30">
                     <div className="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shrink-0">
                       <Flame className="w-6 h-6" />
                     </div>
@@ -237,7 +237,7 @@ export default function SobrePage() {
                   </div>
                   <div className="mt-space-md pt-space-xs border-t border-outline-variant/20 flex items-center gap-1 text-secondary font-label-sm font-bold">
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>KDS em Tempo Real</span>
+                    <span>Preparo em Tempo Real</span>
                   </div>
                 </div>
 

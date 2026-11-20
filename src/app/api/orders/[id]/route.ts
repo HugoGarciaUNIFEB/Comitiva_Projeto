@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { getOrderStatusConfig, getOrderStepIndex } from "@/lib/orderStatus";
 
 export async function GET(
   req: NextRequest,
@@ -39,11 +40,16 @@ export async function GET(
       !order.deliveryAddress.toLowerCase().includes("retirada no balcão")
     );
     const isDelivery = order.orderType === "DELIVERY" && hasAddress;
+    const deliveryType = isDelivery ? ("ENTREGA" as const) : ("RETIRADA" as const);
+    const statusConfig = getOrderStatusConfig(order.status, isDelivery);
+    const stepIndex = getOrderStepIndex(order.status, isDelivery);
 
     return NextResponse.json({
       ...order,
-      deliveryType: isDelivery ? ("ENTREGA" as const) : ("RETIRADA" as const),
+      deliveryType,
       addressStreet: isDelivery ? order.deliveryAddress : null,
+      statusConfig,
+      stepIndex,
     });
   } catch (error) {
     console.error("Erro ao buscar pedido:", error);
